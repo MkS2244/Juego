@@ -1,17 +1,12 @@
+
 window.onload = function () {
-    //defino como constantes los topes del canvas
-    const TOPEDERECHA = 575;
-    const TOPEIZQUIERDA = 0;
-    const TOPEARRIBA = 0;
-    const TOPEABAJO = 575;
-    
+
     let canvas, ctx; // variable para referenciar el canvas y el contexto de trabajo
     let xDerecha, xIzquierda, yArriba, yAbajo, idAnimacion; //variables para la dirección del personaje
     let posicion = 0; //posición del array 
-    let x=0;    //posicion inicial x
-    let y=0;    //posicion inicial y
+    let x = 0;    //posicion inicial x
+    let y = 0;    //posicion inicial y
     let inicio = 0;
-    let imagenRana, imagenMapa;    
     let miRana;
 
     function Rana(x_, y_) {
@@ -70,7 +65,10 @@ Rana.prototype.generaPosicionAbajo = function (){
 
         if (xDerecha) miRana.generaPosicionDerecha();
 
-        
+                if (xIzquierda) miRana.generaPosicionIzquierda();
+        if (yAbajo) miRana.generaPosicionAbajo();
+        if (yArriba) miRana.generaPosicionArriba();
+
         //pinto la Rana
         ctx.drawImage(
             miRana.imagenRana, //imagen completa 
@@ -80,10 +78,9 @@ Rana.prototype.generaPosicionAbajo = function (){
             miRana.tamañoY, //tamaño de recorte del eje y
             miRana.x,   //posicion X
             miRana.y,   //posicion Y
-            miRana.tamañoX,
-            miRana.tamañoY
+            miRana.tamañoX+16,
+            miRana.tamañoY+16
         );
-
     }
 
     function movimientoRana() {
@@ -91,8 +88,13 @@ Rana.prototype.generaPosicionAbajo = function (){
         if (xIzquierda) inicio = 4;
         if (yAbajo) inicio = 8;
         if (yArriba) inicio = 0;
+        if (xDerecha) inicio = 12;
+        if (xIzquierda) inicio = 4;
+        if (yAbajo) inicio = 8;
+        if (yArriba) inicio = 0;
 
         posicion = inicio + (posicion + 1) % 2;
+        
     }
 
 
@@ -118,6 +120,7 @@ Rana.prototype.generaPosicionAbajo = function (){
                 yAbajo = true;
                 break;
         }
+
     }
 
     function desactivaMovimiento(evt) {
@@ -131,6 +134,7 @@ Rana.prototype.generaPosicionAbajo = function (){
             // Left arrow
             case 37:
                 xIzquierda = false;
+
                 break;
             // Up arrow
             case 38:
@@ -147,7 +151,11 @@ Rana.prototype.generaPosicionAbajo = function (){
     document.addEventListener("keydown",activaMovimiento,false);
     document.addEventListener("keyup", desactivaMovimiento, false);
 
-//    localizo el canvas y genero contexto de trabajo 
+    //  Evento para saber cuando se presiona una tecla
+    document.addEventListener("keydown", activaMovimiento, false);
+    document.addEventListener("keyup", desactivaMovimiento, false);
+
+    //    localizo el canvas y genero contexto de trabajo 
     canvas = document.getElementById("miCanvas");
     ctx = canvas.getContext("2d");
 
@@ -161,6 +169,15 @@ Rana.prototype.generaPosicionAbajo = function (){
 
     //creo un objeto de Rana
     miRana = new Rana(x, y);
+
+    //  Lanzo la animación
+    idAnimacion = setInterval(pintarRana, 24/1000);
+
+    //  Animación encargada de hacer el movimiento de la Rana
+    let idMovimiento = setInterval(movimientoRana, 1000/8);
+
+
+}
 
 //  Lanzo la animación
     idAnimacion = setInterval(pintarRana, 1000/50);
