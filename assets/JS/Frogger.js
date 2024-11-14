@@ -186,4 +186,4 @@ Rana.prototype.generaPosicionAbajo = function (){
     let idMovimiento = setInterval(movimientoRana, 1000);
     pintarMapa();    
 
-}
+
