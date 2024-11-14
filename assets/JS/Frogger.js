@@ -11,7 +11,7 @@ window.onload = function () {
     let x=0;    //posicion inicial x
     let y=0;    //posicion inicial y
     let inicio = 0;
-    let imagenRana;
+    let imagenRana, imagenMapa;    
     let miRana;
 
     function Rana(x_, y_) {
@@ -56,7 +56,11 @@ Rana.prototype.generaPosicionAbajo = function (){
     }
 }
 
+    function pintarMapa(){
+        
+        ctx.drawImage(imagenMapa,0,0,600,400);
 
+    }
 
 // ------------ PINTAR EN EL CANVAS -------------
 
@@ -151,6 +155,10 @@ Rana.prototype.generaPosicionAbajo = function (){
     imagenRana.src = "assets/img/ArcadeFrogger.png";
     Rana.prototype.imagenRana = imagenRana;
 
+    imagenMapa = new Image();
+    imagenMapa.src = "assets/img/mapa.png";
+    
+
     //creo un objeto de Rana
     miRana = new Rana(x, y);
 
@@ -159,6 +167,6 @@ Rana.prototype.generaPosicionAbajo = function (){
 
 //  Animación encargada de hacer el movimiento de la Rana
     let idMovimiento = setInterval(movimientoRana, 1000);
-
+    pintarMapa();    
 
 }
