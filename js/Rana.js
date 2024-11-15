@@ -2,9 +2,8 @@
 function Rana(x_, y_) {
     this.x = x_;
     this.y = y_;
-    this.animacionRana = [[1, 1], [17, 1], [19, 1], [35, 1], [37, 1], [53, 1], [55, 1], [71, 1], [73, 1], [89, 1], [91, 1], [107, 1], [109, 1], [125, 1], [127, 1], [143, 1]];
-    //                                  arriba                          izquierda                               abajo                                  derecha   
-    this.velocidadRana = 1;
+    this.animacionRana =[[1, 1], [18, 1], [37, 1], [55, 1], [73, 1], [91, 1], [109, 1], [127, 1]];
+    //                       arriba       izquierda          abajo         derecha   
     this.tamañoX = 16;
     this.tamañoY = 16;
 }
@@ -37,5 +36,5 @@ Rana.prototype.generaPosicionAbajo = function () {
 
 
 imagenRana = new Image();
-imagenRana.src = "assets/img/ArcadeFrogger.png";
+imagenRana.src = "./assets/img/Rana.png";
 Rana.prototype.imagenRana = imagenRana;

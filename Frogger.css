@@ -6,14 +6,13 @@
 }
 
 #miCanvas {
-   background-image: url("assets/img/mapa.png");
-   
+   background-image: url("assets/img/mapa1.png");
 }
-
 
 #infoCanvas {
 
    background-color: black;
+
 }
 
 #canvasJuego {

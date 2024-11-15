@@ -1,15 +1,25 @@
-function Tortuga (x_ , y_ ){
+function Tortuga (x_ , y_,velocidad_, acabado_ ){
     
     this.x = x_;
     this.y = y_;
-
+    this.velocidad = velocidad_;
+    this.acabado = acabado_;
 }
 
-Tortuga.prototype.imagenTortuga = new Image();
-Tortuga.prototype.imagenTortuga.src= "./assets/img/ArcadeFrogger.png";
+imagenTortuga = new Image();
+imagenTortuga.src= "./assets/img/Tortuga.png";
+Tortuga.prototype.imagenTortuga = imagenTortuga;
 
 Tortuga.prototype.pintarTortuga = function(ctx_){
     ctx_.drawImage(this.imagenTortuga, this.x, this.y);
 }
 
-//SIN TERMINAR
+Tortuga.prototype.mover = function() {
+    this.x = this.x + this.velocidad;
+}
+Tortuga.prototype.desapareceDelMapa = function(){
+    if (this.x < 500){
+        return true;
+    }
+}
+
