@@ -23,9 +23,8 @@ window.onload = function () {
     let y = 0;    //posicion inicial y
     let inicio = 0;
     let imagenRana;
-    let miRana;
-    let miTortuga;
-    let tortugas = [];
+    let miRana, miTronco, miTortuga;
+    let tortugas = [] , troncos= [];
 
     // -------------------------------------------------
     //              R A N A
@@ -85,7 +84,7 @@ window.onload = function () {
     }
 
     imagenTortuga = new Image();
-    imagenTortuga.src = "./assets/img/Tortuga.png";
+    imagenTortuga.src = "assets/img/Tortuga.png";
     Tortuga.prototype.imagenTortuga = imagenTortuga;
 
     Tortuga.prototype.pintarTortuga = function (ctx_) {
@@ -97,7 +96,7 @@ window.onload = function () {
     }
     Tortuga.prototype.desapareceDelMapa = function () {
         if (this.x < 500) {
-            return true;
+            this.acabado = true;
         }
     }
 
@@ -118,8 +117,8 @@ window.onload = function () {
         for (let i = 0; i < tortugas.length; i++) {
             tortugas[i].pintarTortuga(ctx);
             tortugas[i].mover();
-            if (tortugas[i].x > TOPEDERECHA) {
-                tortugas[i].acabado = true;
+            if (miTortuga.desapareceDelMapa == true) {
+                miTortuga.acabado = true;
                 tortugas.splice(i, 1);
                 i--;
                 console.log(tortugas[i].length, "tortugas"); 
@@ -151,6 +150,56 @@ window.onload = function () {
         }
     }
 
+    // -------------------------------------------------
+    //               T R O N C O S
+    // -------------------------------------------------
+
+    function Tronco (x_ , y_,velocidad_, acabado_ ){
+        this.x = x_;
+        this.y = y_;
+        this.velocidad = velocidad_;
+        this.acabado = acabado_;
+    }
+    
+    imagenTronco = new Image ();
+    imagenTronco.src = "assets/img/Tronco.png";
+    Tronco.prototype.imagenTronco = imagenTronco;
+    
+    Tronco.prototype.pintarTronco = function (){
+        ctx_.drawImage(this.imagenTronco, this.x, this.y);
+    }
+    
+    Tronco.prototype.moverTronco = function (){
+        this.x = this.x - this.velocidad;
+    }
+    
+    Tronco.prototype.desapareceDelMapa = function (){
+        
+    }
+
+    function generarTroncos (){
+        
+        let xTronco = 650;
+        let yPosicionTronco = [90, 125];
+        let yRandomTronco = yPosicionTronco[Math.floor(Math.random()* yPosicionTronco.length)];
+        let velocidadTronco = 0.2;
+
+        miTronco = new Tronco(xTronco, yRandomTronco, velocidadTronco, false);
+        troncos.push(miTronco);
+    }
+
+    //mover los troncos de derecha a izquierda 
+    function moverTroncos(){
+        for (let i = 0; i < troncos.length; i--){
+            troncos[i].pintarTronco(ctx);
+            troncos[i].moverTronco();
+            if(miTronco.desapareceDelMapa == true){
+                troncos.splice(i, 1);
+                console.log(troncos.length, "Troncos");
+            }
+
+        }
+    }
 
     // ------------ PINTAR EN EL CANVAS -------------
 
@@ -182,6 +231,7 @@ window.onload = function () {
 
         //--------------------- MOVER LAS TORTUGAS 
         moverTortugas();
+        moverTroncos();
     }
 
     function movimientoRana() {
@@ -264,4 +314,5 @@ window.onload = function () {
 
     let idTortugas = setInterval(generarTortugas, 3000);
     let idAnimarTortugas = setInterval(animarTortuga,3000);
+    let idTroncos = setInterval(generarTroncos, 3000);
 }   

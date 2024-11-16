@@ -14,7 +14,7 @@ Tortuga.prototype.pintarTortuga = function(ctx_){
     ctx_.drawImage(this.imagenTortuga, this.x, this.y);
 }
 
-Tortuga.prototype.mover = function() {
+Tortuga.prototype.moverTortuga = function() {
     this.x = this.x + this.velocidad;
 }
 Tortuga.prototype.desapareceDelMapa = function(){
