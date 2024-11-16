@@ -1,10 +1,20 @@
 
 window.onload = function () {
+
     //defino como constantes los topes del canvas
     const TOPEDERECHA = 600 - 32;
     const TOPEIZQUIERDA = 0;
     const TOPEARRIBA = 0;
     const TOPEABAJO = 400 - 32;
+    
+    const ANCHOFRAMETORTUGA = 16;   
+    const ALTOFRAMETORTUGA = 16;    //tamaño del sprite
+    const TOTALFRAMESTORTUGA = 5;   // total de sprites de la tortuga
+
+//Variables de la animación de la tortuga
+    let frameActualTortuga = 0;
+    let xTortuga = 100; //posicion inicial en x
+    let yTortuga = 150; //posicion inicial en y
 
     let canvas, ctx; // variable para referenciar el canvas y el contexto de trabajo
     let xDerecha, xIzquierda, yArriba, yAbajo, idAnimacion; //variables para la dirección del personaje
@@ -16,6 +26,10 @@ window.onload = function () {
     let miRana;
     let miTortuga;
     let tortugas = [];
+
+    // -------------------------------------------------
+    //              R A N A
+    // -------------------------------------------------
 
     function Rana(x_, y_) {
         this.x = x_;
@@ -58,46 +72,82 @@ window.onload = function () {
         }
     }
 
-    // ------------------ TORTUGA ---------------
-    function Tortuga (x_ , y_,velocidad_, acabado_ ){
-    
+    // -------------------------------------------------
+    //               T O R T U G A 
+    // -------------------------------------------------
+
+    function Tortuga(x_, y_, velocidad_, acabado_) {
+
         this.x = x_;
         this.y = y_;
         this.velocidad = velocidad_;
         this.acabado = acabado_;
     }
-    
+
     imagenTortuga = new Image();
-    imagenTortuga.src= "./assets/img/Tortuga.png";
+    imagenTortuga.src = "./assets/img/Tortuga.png";
     Tortuga.prototype.imagenTortuga = imagenTortuga;
-    Tortuga.prototype.pintarTortuga = function(ctx_){
+
+    Tortuga.prototype.pintarTortuga = function (ctx_) {
         ctx_.drawImage(this.imagenTortuga, this.x, this.y);
     }
-    
-    Tortuga.prototype.mover = function() {
+
+    Tortuga.prototype.mover = function () {
         this.x = this.x + this.velocidad;
     }
-    Tortuga.prototype.desapareceDelMapa = function(){
-        if (this.x < 500){
+    Tortuga.prototype.desapareceDelMapa = function () {
+        if (this.x < 500) {
             return true;
         }
     }
 
-    function generarTortugas(){
-        let x = 0;
-        let y = 150;
-        //let contadorTortugas= 0;
-        miTortuga = new Tortuga(x,y, VELOCIDADTORTUGAS, false);
+    function generarTortugas() {
+        let xInicioTortuga = -40;
+        let yPosicionTortuga = [100, 150];
+        let yRandom = yPosicionTortuga[Math.floor(Math.random() * yPosicionTortuga.length)];
+
+        let velocidadTortuga = 0.2;
         //contadorTortugas++; 
+        //let contadorTortugas= 0;
+        miTortuga = new Tortuga(xInicioTortuga, yRandom, velocidadTortuga, false);
         tortugas.push(miTortuga);
-        
+
     }
 
-    function moverTortugas (){
-        for (let i=0;i<=tortugas.length;i++){
+    function moverTortugas() {
+        for (let i = 0; i < tortugas.length; i++) {
             tortugas[i].pintarTortuga(ctx);
             tortugas[i].mover();
-            if(!tortugas.length[i].desapareceDelMapa()) tortugas[i].acabado = true;
+            if (tortugas[i].x > TOPEDERECHA) {
+                tortugas[i].acabado = true;
+                tortugas.splice(i, 1);
+                i--;
+                console.log(tortugas[i].length, "tortugas"); 
+            }
+        }
+    }
+
+    function animarTortuga (){
+        //limpiar canvas 
+        ctx.clearRect(0,0,600,400);
+
+        //dibujar la tortuga animada
+        ctx.drawImage(
+            imagenTortuga,
+            frameActualTortuga*ANCHOFRAMETORTUGA,
+            0,
+            ANCHOFRAMETORTUGA,
+            ALTOFRAMETORTUGA,
+            xTortuga,
+            yTortuga,
+            ANCHOFRAMETORTUGA+14,
+            ALTOFRAMETORTUGA+14 
+        );
+
+        
+        frameActualTortuga++;
+        if (frameActualTortuga >= TOTALFRAMESTORTUGA){
+            frameActualTortuga = 0; //para que vuelva al primer frame de los sprites de la tortuga
         }
     }
 
@@ -113,7 +163,9 @@ window.onload = function () {
         if (yAbajo) miRana.generaPosicionAbajo();
         if (yArriba) miRana.generaPosicionArriba();
 
+
         console.log(posicion)
+
         //pinto la Rana
         ctx.drawImage(
             miRana.imagenRana, //imagen completa 
@@ -123,10 +175,13 @@ window.onload = function () {
             miRana.tamañoY, //tamaño de recorte del eje y
             miRana.x,   //posicion X
             miRana.y,   //posicion Y
-            miRana.tamañoX + 16,
-            miRana.tamañoY + 16
+            miRana.tamañoX + 14, // le sumo 16 para hacer la rana mas grande
+            miRana.tamañoY + 14
         );
 
+
+        //--------------------- MOVER LAS TORTUGAS 
+        moverTortugas();
     }
 
     function movimientoRana() {
@@ -207,7 +262,6 @@ window.onload = function () {
     //  Animación encargada de hacer el movimiento de la Rana
     let idMovimiento = setInterval(movimientoRana, 1000);
 
-    generarTortugas();
-    
-
-}
+    let idTortugas = setInterval(generarTortugas, 3000);
+    let idAnimarTortugas = setInterval(animarTortuga,3000);
+}   
