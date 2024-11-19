@@ -81,6 +81,9 @@ window.onload = function () {
         this.y = y_;
         this.velocidad = velocidad_;
         this.acabado = acabado_;
+        this.tamañoX = 16;
+        this.tamañoY = 16;
+        this.animacionTortuga = [[1,1],[19,1],[37,1],[55,1],[73,1]];
     }
 
     imagenTortuga = new Image();
@@ -88,7 +91,16 @@ window.onload = function () {
     Tortuga.prototype.imagenTortuga = imagenTortuga;
 
     Tortuga.prototype.pintarTortuga = function (ctx_) {
-        ctx_.drawImage(this.imagenTortuga, this.x, this.y);
+        ctx_.drawImage(this.imagenTortuga,
+            this.animacionTortuga[frameActualTortuga][0],
+            this.animacionTortuga[frameActualTortuga][1],
+            this.tamañoX,
+            this.tamañoY,
+            this.x,
+            this.y,
+            this.tamañoX+14,
+            this.tamañoY+14
+        );
     }
 
     Tortuga.prototype.mover = function () {
@@ -104,10 +116,8 @@ window.onload = function () {
         let xInicioTortuga = -40;
         let yPosicionTortuga = [100, 150];
         let yRandom = yPosicionTortuga[Math.floor(Math.random() * yPosicionTortuga.length)];
-
         let velocidadTortuga = 0.2;
-        //contadorTortugas++; 
-        //let contadorTortugas= 0;
+
         miTortuga = new Tortuga(xInicioTortuga, yRandom, velocidadTortuga, false);
         tortugas.push(miTortuga);
 
@@ -117,8 +127,7 @@ window.onload = function () {
         for (let i = 0; i < tortugas.length; i++) {
             tortugas[i].pintarTortuga(ctx);
             tortugas[i].mover();
-            if (miTortuga.desapareceDelMapa == true) {
-                miTortuga.acabado = true;
+            if (tortugas[i].desapareceDelMapa()) {
                 tortugas.splice(i, 1);
                 i--;
                 console.log(tortugas[i].length, "tortugas"); 
@@ -153,51 +162,53 @@ window.onload = function () {
     // -------------------------------------------------
     //               T R O N C O S
     // -------------------------------------------------
-
-    function Tronco (x_ , y_,velocidad_, acabado_ ){
+    function Tronco(x_, y_, velocidad_, acabado_) {
         this.x = x_;
         this.y = y_;
         this.velocidad = velocidad_;
         this.acabado = acabado_;
+        this.tamañoX = 44;
+        this.tamañoY = 12;
+        this.animacionTronco = [[5,3]];
     }
-    
-    imagenTronco = new Image ();
+
+    let imagenTronco = new Image();
     imagenTronco.src = "assets/img/Tronco.png";
     Tronco.prototype.imagenTronco = imagenTronco;
-    
-    Tronco.prototype.pintarTronco = function (){
-        ctx_.drawImage(this.imagenTronco, this.x, this.y);
+
+    Tronco.prototype.pintarTronco = function (ctx) {
+        ctx.drawImage(this.imagenTronco, this.x, this.y);
     }
-    
-    Tronco.prototype.moverTronco = function (){
+
+    Tronco.prototype.moverTronco = function () {
         this.x = this.x - this.velocidad;
     }
-    
-    Tronco.prototype.desapareceDelMapa = function (){
-        
+
+    Tronco.prototype.desapareceDelMapa = function () {
+        return this.x < 0;
     }
 
-    function generarTroncos (){
-        
+    function generarTroncos() {
         let xTronco = 650;
         let yPosicionTronco = [90, 125];
-        let yRandomTronco = yPosicionTronco[Math.floor(Math.random()* yPosicionTronco.length)];
+        let yRandomTronco = yPosicionTronco[Math.floor(Math.random() * yPosicionTronco.length)];
         let velocidadTronco = 0.2;
 
-        miTronco = new Tronco(xTronco, yRandomTronco, velocidadTronco, false);
+        let miTronco = new Tronco(xTronco, yRandomTronco, velocidadTronco, false);
         troncos.push(miTronco);
     }
 
-    //mover los troncos de derecha a izquierda 
-    function moverTroncos(){
-        for (let i = 0; i < troncos.length; i--){
+
+    function moverTroncos() {
+        for (let i = 0; i < troncos.length; i++) {
             troncos[i].pintarTronco(ctx);
             troncos[i].moverTronco();
-            if(miTronco.desapareceDelMapa == true){
+
+            if (troncos[i].desapareceDelMapa()) {
                 troncos.splice(i, 1);
+                i--;
                 console.log(troncos.length, "Troncos");
             }
-
         }
     }
 
@@ -232,6 +243,7 @@ window.onload = function () {
         //--------------------- MOVER LAS TORTUGAS 
         moverTortugas();
         moverTroncos();
+        animarTortuga();   
     }
 
     function movimientoRana() {
