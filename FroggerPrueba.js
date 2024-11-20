@@ -1,4 +1,5 @@
 
+
 window.onload = function () {
 
     //defino como constantes los topes del canvas
@@ -84,6 +85,7 @@ window.onload = function () {
         this.tamañoX = 16;
         this.tamañoY = 16;
         this.animacionTortuga = [[1,1],[19,1],[37,1],[55,1],[73,1]];
+        this.posicion = 0;
     }
 
     imagenTortuga = new Image();
@@ -91,16 +93,7 @@ window.onload = function () {
     Tortuga.prototype.imagenTortuga = imagenTortuga;
 
     Tortuga.prototype.pintarTortuga = function (ctx_) {
-        ctx_.drawImage(this.imagenTortuga,
-            this.animacionTortuga[frameActualTortuga][0],
-            this.animacionTortuga[frameActualTortuga][1],
-            this.tamañoX,
-            this.tamañoY,
-            this.x,
-            this.y,
-            this.tamañoX+14,
-            this.tamañoY+14
-        );
+        ctx_.drawImage(this.imagenTronco, this.x, this.y);
     }
 
     Tortuga.prototype.mover = function () {
@@ -113,18 +106,21 @@ window.onload = function () {
     }
 
     function generarTortugas() {
-        let xInicioTortuga = -40;
-        let yPosicionTortuga = [100, 150];
-        let yRandom = yPosicionTortuga[Math.floor(Math.random() * yPosicionTortuga.length)];
-        let velocidadTortuga = 0.2;
 
-        miTortuga = new Tortuga(xInicioTortuga, yRandom, velocidadTortuga, false);
-        tortugas.push(miTortuga);
+        for (let i = 0; i < 2; i++) {
+            let xInicioTortuga = -40;
+            let yPosicionTortuga = [100, 150];
+            let yRandom = yPosicionTortuga[Math.floor(Math.random() * yPosicionTortuga.length)];
+            let velocidadTortuga = 0.2;
+
+            miTortuga = new Tortuga(xInicioTortuga, yRandom, velocidadTortuga, false);
+            tortugas.push(miTortuga);
+        }
 
     }
 
     function moverTortugas() {
-        for (let i = 0; i < tortugas.length; i++) {
+        /* for (let i = 0; i < tortugas.length; i++) {
             tortugas[i].pintarTortuga(ctx);
             tortugas[i].mover();
             if (tortugas[i].desapareceDelMapa()) {
@@ -132,7 +128,8 @@ window.onload = function () {
                 i--;
                 console.log(tortugas[i].length, "tortugas"); 
             }
-        }
+        } */
+        
     }
 
     function animarTortuga (){
@@ -140,23 +137,19 @@ window.onload = function () {
         ctx.clearRect(0,0,600,400);
 
         //dibujar la tortuga animada
-        ctx.drawImage(
-            imagenTortuga,
-            frameActualTortuga*ANCHOFRAMETORTUGA,
-            0,
-            ANCHOFRAMETORTUGA,
-            ALTOFRAMETORTUGA,
-            xTortuga,
-            yTortuga,
-            ANCHOFRAMETORTUGA+14,
-            ALTOFRAMETORTUGA+14 
+        ctx.drawImage(this.imagenTortuga,
+            this.animacionTortuga[miTortuga.posicion][0],
+            this.animacionTortuga[miTortuga.posicion][1],
+            this.tamañoX,
+            this.tamañoY,
+            this.x,
+            this.y,
+            this.tamañoX+14,
+            this.tamañoY+14
         );
 
         
-        frameActualTortuga++;
-        if (frameActualTortuga >= TOTALFRAMESTORTUGA){
-            frameActualTortuga = 0; //para que vuelva al primer frame de los sprites de la tortuga
-        }
+        
     }
 
     // -------------------------------------------------
@@ -246,6 +239,18 @@ window.onload = function () {
         animarTortuga();   
     }
 
+/*     function generaAnimación() {
+        ctx.clearRect(0, 0, 600, 400);
+
+        //Muevo los objetos
+        moverTortugas();
+        moverTroncos();
+        movimientoRana();
+
+        //hacer la comprobacion de si nos han matado o no terminamos la partida
+        
+    } */
+
     function movimientoRana() {
         if (xDerecha) inicio = 6;
         if (xIzquierda) inicio = 2;
@@ -322,7 +327,8 @@ window.onload = function () {
     idAnimacion = setInterval(pintarRana, 24 / 1000);
 
     //  Animación encargada de hacer el movimiento de la Rana
-    let idMovimiento = setInterval(movimientoRana, 1000);
+    //let idMovimiento = setInterval(movimientoRana, 1000);
+
 
     let idTortugas = setInterval(generarTortugas, 3000);
     let idAnimarTortugas = setInterval(animarTortuga,3000);
