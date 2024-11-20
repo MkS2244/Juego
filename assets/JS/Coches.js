@@ -1,4 +1,6 @@
-function Coches (x_, y_, velocidad_, acabado_){
+import {ctx} from "./constantes.js";
+
+export function Coches (x_, y_, velocidad_, acabado_){
     this.x = x_;
     this.y = y_;
     this.velocidad = velocidad_;
@@ -6,21 +8,25 @@ function Coches (x_, y_, velocidad_, acabado_){
 
 }
 
-imagenCoche = new Image();
+let imagenCoche = new Image();
 imagenCoche.src = "./assets/img/ArcadeFrogger.png";
 Coches.prototype.imagenCoche = imagenCoche;
 
-Coches.prototype.pintar =function (ctx_) {
-    ctx_.drawImage(this.imagenCoche, this.x,this.y);
+Coches.prototype.pintarCoches =function () {
+    ctx.drawImage(this.imagenCoche, this.x,this.y);
 
 }
 
-Coches.prototype.moverDerecha = function (){
+Coches.prototype.moverDerechaCoches = function (){
     this.x = this.x + this.velocidad;
-    //sin terminar
+    
 }
 
-Coches.prototype.moverIzquierda = function(){
-    this.x = this.x - this.velocidadRana;
-    //sin terminar
+Coches.prototype.moverIzquierdaCoches = function(){
+    this.x = this.x - this.velocidad;
+    
 }
+
+Coches.prototype.desapareceDelMapa = function(){
+    
+}   
