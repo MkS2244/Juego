@@ -16,16 +16,20 @@ let idRana;                                     // id de la rana
 let idTortuga;                                  // id de la tortuga
 let idTronco;                                   // id del tronco
 let idCamion;                                   // id del camion
+let idCoches;                                   // id de los coches
+
 let idGeneraTortugas;                           // id de la generacion de tortugas
 let idGeneraTroncos;                            // id de la generacion de troncos
 let idGeneraCamiones;                           // id de la generacion de camiones
+let idGeneraCoches;                             // id de la generacion de coches
 
-
-let contadorTortuga = 0;                       // contador de tortugas
-let contadorTroncos = 0;                       // contador de troncos
-let contadorCamion = 0;                        // contador de camiones
+let contadorTortuga = 0;                        // contador de tortugas
+let contadorTroncos = 0;                        // contador de troncos
+let contadorCamion = 0;                         // contador de camiones
+let contadorCoches = 0;                         // contador de coches
 
 let juegoPausado = false;                       // variable para pausar el juego
+let estamosMuertos = false;                     // variable para saber si estamos muertos
 
 const EstadosRana = {
     PARADA: "parada",
