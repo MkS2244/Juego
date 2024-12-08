@@ -17,8 +17,8 @@ Tortuga.prototype.imagenTortuga = imagenTortuga;
 
 Tortuga.prototype.pintarTortuga = function(){
     ctx.drawImage(this.imagenTortuga,
-        this.animacionTortuga[miTortuga.posicion][0],
-        this.animacionTortuga[miTortuga.posicion][1],
+        this.animacionTortuga[this.posicion][0],
+        this.animacionTortuga[this.posicion][1],
         this.tamañoX,
         this.tamañoY,
         this.x,
@@ -26,7 +26,6 @@ Tortuga.prototype.pintarTortuga = function(){
         this.tamañoX+14,
         this.tamañoY+14
     );
-
 }
 
 Tortuga.prototype.moverTortuga = function() {
@@ -35,8 +34,9 @@ Tortuga.prototype.moverTortuga = function() {
     this.posicion = (this.posicion +1) %5;
 
 }
+
 Tortuga.prototype.desapareceDelMapa = function(){
-    if (this.x < 500){
+    if (this.x < 600){
         return true;
     }
 }
