@@ -1,4 +1,4 @@
-import {ctx} from "./constantes.js";
+import {ctx} from "./Constantes.js";
 
 export function Coches (x_, y_, velocidad_, acabado_){
     this.x = x_;

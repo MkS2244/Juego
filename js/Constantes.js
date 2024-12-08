@@ -13,7 +13,17 @@ let imagenRana, imagenTortuga, imagenTronco;    // variables de las imagenes de 
 
 let idAnimacion;                                // id de la animacion
 let idRana;                                     // id de la rana
+let idTortuga;                                  // id de la tortuga
+let idTronco;                                   // id del tronco
+let idCamion;                                   // id del camion
+let idGeneraTortugas;                           // id de la generacion de tortugas
+let idGeneraTroncos;                            // id de la generacion de troncos
+let idGeneraCamiones;                           // id de la generacion de camiones
 
+
+let contadorTortuga = 0;                       // contador de tortugas
+let contadorTroncos = 0;                       // contador de troncos
+let contadorCamion = 0;                        // contador de camiones
 
 let juegoPausado = false;                       // variable para pausar el juego
 
