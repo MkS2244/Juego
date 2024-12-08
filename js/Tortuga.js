@@ -1,24 +1,20 @@
-import { ctx }  from "./constantes.js";
-
-export function Tortuga (x_ , y_,velocidad_, acabado_ ){
-    this.x = x_;
+function Tortuga ( y_){
+    this.x = -32;
     this.y = y_;
-    this.velocidad = velocidad_;
-    this.acabado = acabado_;
+    this.velocidad = 1.5;
+    this.acabado = false;
     this.tamañoX = 16;
     this.tamañoY = 16;
-    this.animacionTortuga = [[1,1],[19,1],[37,1],[55,1],[73,1]];
-    this.posicion = 0;
 }
 
-let imagenTortuga = new Image();
-imagenTortuga.src= "./assets/img/Tortuga1.png";
-Tortuga.prototype.imagenTortuga = imagenTortuga;
+const imgTortuga = new Image();
+imgTortuga.src = "./assets/img/TortugaDef.png";
+Tortuga.prototype.imgTortuga = imgTortuga;
 
-Tortuga.prototype.pintarTortuga = function(){
-    ctx.drawImage(this.imagenTortuga,
-        this.animacionTortuga[this.posicion][0],
-        this.animacionTortuga[this.posicion][1],
+Tortuga.prototype.pintarTortuga = function(ctx){
+    ctx.drawImage(this.imgTortuga,
+        1,              // donde empieza el recorte en X de sprite de la torutuga
+        1,              // donde empieza el recorte en Y de sprite de la tortuga
         this.tamañoX,
         this.tamañoY,
         this.x,
@@ -28,11 +24,9 @@ Tortuga.prototype.pintarTortuga = function(){
     );
 }
 
-Tortuga.prototype.moverTortuga = function() {
-    this.x = this.x + this.velocidad;
-
-    this.posicion = (this.posicion +1) %5;
-
+// para sacar las tortugas de izquierda a derecha
+Tortuga.prototype.mover = function (){
+    this.x += this.velocidad;
 }
 
 Tortuga.prototype.desapareceDelMapa = function(){
@@ -40,4 +34,3 @@ Tortuga.prototype.desapareceDelMapa = function(){
         return true;
     }
 }
-

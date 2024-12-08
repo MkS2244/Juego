@@ -126,7 +126,7 @@ window.onload = function () {
 
     }
 
-    Tortuga.prototype.mover = function () {
+    Tortuga.prototype.mover = function () {git 
         this.x = this.x + this.velocidad;
     }
 
