@@ -74,7 +74,7 @@ window.onload = function () {
         }
     }
 
-    Rana.prototype.pintar = function (){
+    Rana.prototype.pintar = function () {
         ctx.drawImage(this.imagenRana,
             this.animacionRana[posicion][0],
             this.animacionRana[posicion][1],
@@ -108,7 +108,7 @@ window.onload = function () {
     }
 
     imagenTortuga = new Image();
-    imagenTortuga.src = "assets/img/TortugaDef.png";
+    imagenTortuga.src = "assets/img/Tortuga.png";
     Tortuga.prototype.imagenTortuga = imagenTortuga;
 
     Tortuga.prototype.pintar = function () {
@@ -171,7 +171,7 @@ window.onload = function () {
 
     }
 
-    function posicionSpriteTortuga() {       
+    function posicionSpriteTortuga() {
 
         //console.log("Tortuga ", posicionTortuga);
         posicionTortuga = (posicionTortuga + 1) % 5;
@@ -257,93 +257,94 @@ window.onload = function () {
 
     }
 
-    function movimientoRana() {
+}
 
-        //animacion de la Rana
-        if (xDerecha) inicio = 6;
-        if (xIzquierda) inicio = 2;
-        if (yAbajo) inicio = 4;
-        if (yArriba) inicio = 0;
+function movimientoRana() {
 
-        posicion = inicio + (posicion + 1) % 2;
+    //animacion de la Rana
+
+    //animacion de la Rana
+    if (xDerecha) inicio = 6;
+    if (xIzquierda) inicio = 2;
+    if (yAbajo) inicio = 4;
+    if (yArriba) inicio = 0;
+
+    posicion = inicio + (posicion + 1) % 2;
+}
+
+
+function activaMovimiento(evt) {
+
+    switch (evt.keyCode) {
+
+
+        // Right arrow.
+        case 39:
+            xDerecha = true;
+
+
+            break;
+        // Left arrow
+        case 37:
+            xIzquierda = true;
+            break;
+        // Up arrow
+        case 38:
+            yArriba = true;
+            break;
+        // Down arrow
+        case 40:
+            yAbajo = true;
+            break;
+    }
+}
+
+function desactivaMovimiento(evt) {
+
+    switch (evt.keyCode) {
+
+        // Right arrow.
+        case 39:
+            xDerecha = false;
+            break;
+        // Left arrow
+        case 37:
+            xIzquierda = false;
+            break;
+        // Up arrow
+        case 38:
+            yArriba = false;
+            break;
+        // Down arrow
+        case 40:
+            yAbajo = false;
+            break;
     }
 
+}
+//  Evento para saber cuando se presiona una tecla
+document.addEventListener("keydown", activaMovimiento, false);
+document.addEventListener("keyup", desactivaMovimiento, false);
 
-    function activaMovimiento(evt) {
+//    localizo el canvas y genero contexto de trabajo 
+canvas = document.getElementById("miCanvas");
+ctx = canvas.getContext("2d");
 
-        switch (evt.keyCode) {
+imagenRana = new Image();
+imagenRana.src = "assets/img/Rana.png";
+Rana.prototype.imagenRana = imagenRana;
 
+//creo un objeto de Rana
+miRana = new Rana(x, y);
 
-            // Right arrow.
-            case 39:
-                xDerecha = true;
-
-                break;
-            // Left arrow
-            case 37:
-                xIzquierda = true;
-                break;
-            // Up arrow
-            case 38:
-                yArriba = true;
-                break;
-            // Down arrow
-            case 40:
-                yAbajo = true;
-                break;
-        }
-    }
-
-    function desactivaMovimiento(evt) {
-
-        switch (evt.keyCode) {
-
-            // Right arrow.
-            case 39:
-                xDerecha = false;
-                break;
-            // Left arrow
-            case 37:
-                xIzquierda = false;
-                break;
-            // Up arrow
-            case 38:
-                yArriba = false;
-                break;
-            // Down arrow
-            case 40:
-                yAbajo = false;
-                break;
-        }
-
-    }
-
-    //  Evento para saber cuando se presiona una tecla
-    document.addEventListener("keydown", activaMovimiento, false);
-    document.addEventListener("keyup", desactivaMovimiento, false);
-
-
-    //    localizo el canvas y genero contexto de trabajo 
-    canvas = document.getElementById("miCanvas");
-    ctx = canvas.getContext("2d");
-
-    imagenRana = new Image();
-    imagenRana.src = "assets/img/Rana.png";
-    Rana.prototype.imagenRana = imagenRana;
-
-    //creo un objeto de Rana
-    miRana = new Rana(x, y);
-
+//  Lanzo la animación
+idAnimacion = setInterval(pintarRana, 24 / 1000);
 
     //  Animación encargada de hacer el movimiento de la Rana
-    idAnimacion = setInterval(pintarRana, 50 / 1000);
-    let idMovimiento = setInterval(movimientoRana, 1000);
-    let idTortugas = setInterval(generarTortugas, 1000);
+    //let idMovimiento = setInterval(movimientoRana, 1000);
 
 
-    let idPrueba = setInterval(generaAnimación, 100);
-    let idAnimarTortugas = setInterval(posicionSpriteTortuga, 100);
-
-
-    //let idTroncos = setInterval(generarTroncos, 3000);
-}   
+    let idTortugas = setInterval(generarTortugas, 3000);
+    let idAnimarTortugas = setInterval(animarTortuga,3000);
+    let idTroncos = setInterval(generarTroncos, 3000);
+   
