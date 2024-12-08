@@ -1,13 +1,8 @@
-
 #miCanvas,
 #infoCanvas {
 
    border: 1px solid #ccc;
 
-}
-
-#miCanvas {
-   background-image: url("./assets/img/mapa.png");
 }
 
 #infoCanvas {
@@ -20,8 +15,14 @@
 
    display: flex;
 
-   justify-content: center;
+   flex-direction: column;
 
+   align-items: center;
+}
+
+.botones {
+   display: flex;
+   justify-content: center;
 }
 
 body {
