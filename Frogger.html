@@ -1,36 +1,34 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="author" content="Marta Sánchez">
-    <!-- aqui meter los demás scripts -->
-    <script src="./js/Constantes.js"></script>
-    <script src="./js/Coches.js"></script>
-    <script src="./js/Camion.js"></script>
-    <script src="./js/Troncos.js"></script>
-    <script src="./js/Tortuga.js"></script>
-    <script src="./js/Rana.js"></script>
-    <script src="Frogger.js"></script>
-    <link rel="stylesheet" href="Frogger.css">
-    <title>Frogger</title>
-</head>
-
-<body>
-    <div id="Logo"><img src="assets/img/froggerLogo.png" alt="Logo Frogger"></div><br>
-    <section class="botones">
-        <button class="botones" id="pausaPartida">Pausa</button>
-        <button class="botones" id="nuevaPartida">Nueva Partida</button>
-    </section><br>
-    <div id="canvasJuego">
-        <canvas id="miCanvas" width="600" height="400"></canvas>
-        <canvas id="infoCanvas" width="600" height="100"></canvas>
-    </div>
-    <p>
-        Controles del juego:
-        Utiliza las flechas del teclado para mover la rana.
-    </p>
-
-</body>
-
+    <head>
+        <meta charset="UTF-8">
+        <meta name="author" content="Marta Sánchez">
+        <link href="https://fonts.googleapis.com/css2?family=Tiny5&display=swap" rel="stylesheet">
+        <!-- aqui meter los demás scripts -->
+        <script src="./js/Constantes.js"></script>
+        <script src="./js/Coches.js"></script>
+        <script src="./js/Camion.js"></script>
+        <script src="./js/Troncos.js"></script>
+        <script src="./js/Tortuga.js"></script>
+        <script src="./js/Rana.js"></script>
+        <script src="Frogger.js"></script>
+        <link rel="stylesheet" href="Frogger.css">
+        <title>Frogger</title>
+    </head>
+    <body>
+        <div id="Logo"><img src="assets/img/froggerLogo.png" alt="Logo Frogger"></div><br>
+        <section class="botones">
+            <button class="botones" id="pausaPartida">Pausa</button>
+            <button id="reset" onclick="resetRecord()">Restablecer récord</button>
+            <button class="botones" id="nuevaPartida">Nueva Partida</button>
+        </section><br>
+        <div id="canvasJuego">
+            <canvas id="miCanvas" width="600" height="400"></canvas>
+            <canvas id="infoCanvas" width="600" height="100"></canvas>
+        </div>
+        <p>
+            Controles del juego:
+            Utiliza las flechas del teclado para mover la rana.
+        </p>
+    </body>
 </html>

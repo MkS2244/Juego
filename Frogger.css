@@ -37,6 +37,12 @@ body {
 
 }
 
+.tiny5-regular {
+   font-family: "Tiny5", serif;
+   font-weight: 400;
+   font-style: normal;
+ }
+
 #Logo {
 
    margin: 0px auto;
