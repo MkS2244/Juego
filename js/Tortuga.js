@@ -27,7 +27,7 @@ Tortuga.prototype.pintarTortuga = function(ctx){
 
 // para sacar las tortugas de izquierda a derecha
 Tortuga.prototype.moverTortuga = function (){
-    this.x += this.velocidad;
+    this.x += this.velocidad * velocidadJuego;
 }
 
 Tortuga.prototype.desapareceDelMapa = function(){

@@ -1,29 +1,4 @@
 window.onload = function () {
-    // -------------------------------------------------
-    //  VARIABLES Y CONSTANTES 
-    // -------------------------------------------------
-    let nombre = prompt("Introduce tu nombre:");
-
-    let xDerecha, xIzquierda, yArriba, yAbajo;      //variables de movimiento
-
-    let rana;                                       // Objeto rana
-    let tortuga;                                    // Objeto tortuga
-    let tronco;                                     // Objeto tronco
-    let coche1;                                      // Objeto coche1
-    let coche2;                                      // Objeto coche2
-    let coche3;                                      // Objeto coche3
-    let camion;                                     // Objeto camion
-
-    let arrayTortugas = [];                         // Array de tortugas
-    let arrayTroncos = [];                          // Array de troncos
-    let arrayCoches = [];                           // Array de coches
-    let arrayCamiones = [];                         // Array de camiones
-
-    let botonNuevaPartida;                          // Boton para nueva partida
-    let botonPausar;                                // Boton para pausar el juego
-    let botonReanudar;                              // Boton para reanudar el juego
-
-    let puntuacion;                                 // Puntuacion del juego
 
     function reproducirAudio(audio_) {
         audio_.currentTime = 0;
@@ -41,29 +16,37 @@ window.onload = function () {
 
         // Para recuperar partidas que ya existen o inicializar un array vacío si no existen
         let partida = JSON.parse(localStorage.getItem("partida")) || [];
+
         // Agregar la partida nueva con el nombre y la puntuación
         partida.push({ nombre, puntuacion });
-        records.sort((a, b) => b.puntuacion - a.puntuacion);
+        partida.sort((a, b) => b.puntuacion - a.puntuacion);
+
+        if (partida.length > 3) partida.slice(0, 3);
+        //para que salgan solo las 5 mejores
+
         // Guardar en LocalStorage
         localStorage.setItem("partida", JSON.stringify(partida));
     }
 
-    function mostrarPartida(ctxInfo_) {
+    function mostrarPartida() {
         let partida = JSON.parse(localStorage.getItem("partida")) || [];
         //limpio el canvas
-        ctxInfo_.clearRect(0, 0, 600, 100);
-        ctxInfo_.fillStyle = "white";
-        ctxInfo_.font = "20px Tiny5";
+        ctxInfo.clearRect(0, 0, 600, 100);
+        ctxInfo.fillStyle = "white";
+        ctxInfo.font = "20px Tiny5";
 
-        ctxInfo_.fillText("Historial de partidas", 10, 20);
+        ctxInfo.fillText("Historial de partidas", 10, 20);
 
-        // 
-        partida.slice(0, 5).forEach((partida, index) => {
-            ctxInfo_.fillText(`${index + 1}. ${partida.nombre} - ${partida.puntuacion}`, 10, 40 + (index * 20));
-        });
+        if (partida.length === 0) {
+            ctxInfo.fillText("No hay partidas", 10, 40);
+        } else {
+            partida.forEach((partida, index) => {
+                ctxInfo.fillText(`${index + 1}. ${partida.nombre} - ${partida.puntuacion}`, 10, 40 + (index * 20));
+            });
+        }
     }
 
-    function resetRecord(){
+    function resetRecord() {
         localStorage.removeItem("partida");
         console.log("Partidas borradas");
     }
@@ -71,6 +54,19 @@ window.onload = function () {
     // -------------------------------------------------
     //  FUNCION PARA INICIAR LAS VARIABLES DEL JUEGO
     // -------------------------------------------------
+
+    function pintarVidas() {
+        //posicion en la que quiero que se pinten las vidas
+        let x, y, tamañoImgVida = 30;
+        x = 500;
+        y = 10;
+
+        for (let i = 0; i < vidas; i++) {
+
+            // (i *(tamañoImgVida + 5)) es para que las vidas no se pinten una encima de otra
+            ctxInfo.drawImage(imgVidas, x, y + (i * (tamañoImgVida + 1)), tamañoImgVida - 10, tamañoImgVida - 10);
+        }
+    }
 
     function inicioDeVariables() {
 
@@ -85,6 +81,12 @@ window.onload = function () {
         arrayTortugas = [];                                   // inicializo el array de tortugas
         arrayTroncos = [];                                    // inicializo el array de troncos
         arrayCoches = [];                                     // inicializo el array de coches
+
+        vidas = 3;
+        puntuacion = 0;
+        velocidadJuego = 2;
+        juegoPausado = false;
+        estamosMuertos = false;
 
         rana = new Rana();                                    // creo el Objeto rana
     }
@@ -133,9 +135,7 @@ window.onload = function () {
             }
             contadorTroncos += 3;
         }
-
         // console.table("TRONCOS ", arrayTroncos);
-
         if (contadorTroncos === 6) {
             contadorTroncos = 0;
         }
@@ -167,9 +167,9 @@ window.onload = function () {
     function generaCoches() {
         let yPosiciones = [245, 320];
         // Posiciones en las que salen los coches en el mapa
-        let delayCoche1 = 5500;
-        let delayCoche2 = 3500;
-        let delayCoche3 = 1500;
+        let delayCoche1 = 3850;
+        let delayCoche2 = 2750;
+        let delayCoche3 = 1250;
 
         if (contadorCoches < 3) {
             let yPosicion = (contadorCoches < 1) ? yPosiciones[0] : yPosiciones[1];
@@ -191,28 +191,6 @@ window.onload = function () {
                 coche3 = new Coche(yPosicion, "coche3");
                 arrayCoches.push(coche3);
             }, delayCoche3);
-
-            /*             
-                        for (let i = 0 ; i < 1 ; i++){
-                            setTimeout(() => {
-                                coche1 = new Coche (yPosicion, "coche1");
-                                arrayCoches.push(coche1);
-                            }, i * delayCoche1);
-                        }
-                        // genero el coche 2
-                        for (let i = 0 ; i < 1 ; i++){
-                            setTimeout(() => {
-                                coche2 = new Coche (yPosicion, "coche2");
-                                arrayCoches.push(coche2);
-                            }, i * delayCoche2);
-                        }
-                        // genero el coche 3
-                        for (let i = 0 ; i < 1 ; i++){
-                            setTimeout(() => {
-                                coche3 = new Coche (yPosicion, "coche3");
-                                arrayCoches.push(coche3);
-                            }, i * delayCoche3);
-                        } */
 
             contadorCoches++;
         }
@@ -282,7 +260,6 @@ window.onload = function () {
                 rana.generaPosicionArriba();
                 reproducirAudio(audioSaltoRana);
             }
-
             rana.posicion = rana.inicio + (rana.posicion + 1) % 2;
         } else if (rana.estado === EstadosRana.PARADA) {
             rana.posicion = rana.inicio;
@@ -293,7 +270,7 @@ window.onload = function () {
     //  COLISIONES DEL JUEGO
     // -------------------------------------------------
 
-    function ranaMuerta() {
+    function colisionCoche() {
         let i = 0;
 
         let rIzq = rana.x;
@@ -305,7 +282,6 @@ window.onload = function () {
             if (i >= arrayCoches.length) {
                 break;
             }
-
             let oIzq = Math.round(arrayCoches[i].x);
             let oDer = Math.round(arrayCoches[i].x + arrayCoches[i].tamañoX - 20);
             let oDown = Math.round(arrayCoches[i].y);
@@ -315,7 +291,51 @@ window.onload = function () {
                 (rIzq < oDer) &&
                 (rUp > oDown) &&
                 (rDown < oUp)) {
-                estamosMuertos = true;
+                vidas--;
+                pintarVidas();
+
+                if (vidas <= 0) {
+                    estamosMuertos = true;
+                    reproducirAudio(audioAtropello);
+                    detenerJuego();
+                } 
+            } else {
+                i++;
+            }
+        } while (!estamosMuertos);
+
+        return estamosMuertos;
+    }
+
+    function colisionCamion() {
+        let i = 0;
+        let rIzq = rana.x;
+        let rDer = rana.x + rana.tamañoX;
+        let rDown = rana.y;
+        let rUp = rana.y + rana.tamañoY;
+
+        do {
+            if (i >= arrayCamiones.length) {
+                break;
+            }
+
+            let oIzq = Math.round(arrayCamiones[i].x);
+            let oDer = Math.round(arrayCamiones[i].x + arrayCamiones[i].tamañoX - 25);
+            let oDown = Math.round(arrayCamiones[i].y);
+            let oUp = Math.round(arrayCamiones[i].y + arrayCamiones[i].tamañoY - 25);
+
+            if ((rDer > oIzq) &&
+                (rIzq < oDer) &&
+                (rUp > oDown) &&
+                (rDown < oUp)) {
+                vidas--;
+                pintarVidas();
+
+                if (vidas <= 0) {
+                    estamosMuertos = true;
+                    reproducirAudio(audioAtropello);
+                    detenerJuego();
+                } 
             } else {
                 i++;
             }
@@ -329,25 +349,17 @@ window.onload = function () {
     // -------------------------------------------------
 
     function generaAnimacionRana() {
-
-        //limpio el canvas
-        ctx.clearRect(0, 0, 600, 400);
-        ctxInfo.clearRect(0, 0, 600, 100);
         //pinto el mapa del juego
         pintarFondo(ctx);
 
         //Muevo los objetos del juego (troncos, tortugas y coches)
         rana.pintar(ctx);
 
-        if (ranaMuerta()) {
+        if (colisionCoche() || colisionCamion()) {
             console.log("Partida terminada");
             detenerJuego();
-            textoGameOver();
-            
-            
             botonNuevaPartida.disabled = false;
             botonPausar.disabled = true;
-
         }
     }
 
@@ -396,48 +408,37 @@ window.onload = function () {
     // -------------------------------------------------
 
     function pausarPartida() {
-        juegoPausado = !juegoPausado;
+        juegoPausado = true;
 
-        if (juegoPausado) {
-            clearInterval(idRana);
-            ctxInfo.fillStyle = "white";
-            ctxInfo.font = "20px Tiny5";
-            ctxInfo.fillText("Juego Pausado", 600 / 2 - 100, 100 / 2);
+        clearInterval(idRana);
+        clearInterval(idAnimacion);
+        clearInterval(idGeneraTortugas);
+        clearInterval(idTortuga);
+        clearInterval(idGeneraTroncos);
+        clearInterval(idTronco);
+        clearInterval(idGeneraCamiones);
+        clearInterval(idCamion);
+        clearInterval(idGeneraCoches);
+        clearInterval(idCoches);
 
-        }
+        ctxInfo.fillStyle = "#33cc00";
+        ctxInfo.font = "40px Tiny5";
+        ctxInfo.fillText("PAUSA", 600 / 2 - 80, 100 / 2);
 
     }
 
     // -------------------------------------------------
-    //  FUNCION PARA REANUDAR EL JUEGO
+    //  FUNCION PARA REINICIAR EL JUEGO
     // -------------------------------------------------
 
-    /*     function reanudarPartida() {
-    
-            if (juegoPausado) {
-                juegoPausado = false;
-                idRana = setInterval(animacionRana, 50 / 1000);
-                idAnimacion = setInterval(generaAnimacion, 50 / 1000); // Reanuda la animación del juego
-                botonPausar.disabled = false;
-                botonReanudar.disabled = true;
-                botonNuevaPartida.disabled = false;
-    
-            }
-        }
-     */
+    function reiniciarJuego() {
+        console.log("REINICIANDO JUEGO ...");
+        juegoPausado = false;
+        ctx.clearRect(0, 0, 600, 400);
+        ctxInfo.clearRect(0, 0, 600, 100);
 
-    // -------------------------------------------------
-    //  FUNCION PARA COMENZAR EL JUEGO
-    // -------------------------------------------------
-
-    function comenzarJuego() {
-        botonNuevaPartida.disabled = true;
-        botonPausar.disabled = false;
-        /* botonReanudar.disabled = false; */
-
+        rana = new Rana();
         inicioDeVariables();
-        // Para la gestion de la puntuación que será por tiempo
-        let tiempoInicio = Date.now();
 
         idAnimacion = setInterval(generaAnimacionRana, 1000 / 20);
         idRana = setInterval(animacionRana, 1000 / 20);
@@ -455,6 +456,57 @@ window.onload = function () {
         idGeneraCoches = setInterval(generaCoches, 5800);
         idCoches = setInterval(muevoCoches, 1000 / 20);
 
+
+        //para que se reinicie el juego esperando 1 segundo.
+    }
+
+    // -------------------------------------------------
+    //  FUNCION PARA COMENZAR EL JUEGO
+    // -------------------------------------------------
+
+    function comenzarJuego() {
+        console.log("COMENZANDO JUEGO ...");
+
+        botonNuevaPartida.disabled = true;
+        botonPausar.disabled = false;
+        botonReanudar.disabled = false;
+
+        clearInterval(idRana);
+        clearInterval(idAnimacion);
+        clearInterval(idGeneraTortugas);
+        clearInterval(idTortuga);
+        clearInterval(idGeneraTroncos);
+        clearInterval(idTronco);
+        clearInterval(idGeneraCamiones);
+        clearInterval(idCamion);
+        clearInterval(idGeneraCoches);
+        clearInterval(idCoches);
+
+        inicioDeVariables();
+
+        ctx.clearRect(0, 0, 600, 400);
+        ctxInfo.clearRect(0, 0, 600, 100);
+        
+        // Para la gestion de la puntuación que será por tiempo
+        tiempoInicio = Date.now();
+
+        idAnimacion = setInterval(generaAnimacionRana, 1000 / 20);
+        idRana = setInterval(animacionRana, 1000 / 20);
+
+        //genero los elementos de la pantalla 
+        idGeneraTortugas = setInterval(generaTortugas, 3000);
+        idTortuga = setInterval(muevoTortugas, 1000 / 20);
+
+        idGeneraTroncos = setInterval(generaTroncos, 3000);
+        idTronco = setInterval(muevoTroncos, 1000 / 20);
+
+        idGeneraCamiones = setInterval(generaCamiones, 7000);
+        idCamion = setInterval(muevoCamiones, 1000 / 20);
+
+        idGeneraCoches = setInterval(generaCoches, 5800);
+        idCoches = setInterval(muevoCoches, 1000 / 20);
+
+        pintarVidas();
         // Evento para saber cuando se presiona una tecla
         document.addEventListener("keydown", activaMovimiento, false);
         document.addEventListener("keyup", desactivaMovimiento, false);
@@ -468,10 +520,15 @@ window.onload = function () {
 
     function detenerJuego() {
         textoGameOver();
-        //para que se muestre primero el GAME OVER y despues la puntuacion
+        botonReanudar.disabled = false;
+        botonPausar.disabled = true;
+        botonNuevaPartida.disabled = false;
+
+        //para que se muestre primero el GAME OVER y
+        //despues la puntuacion con medio segundo de retraso
         setTimeout(() => {
             guardarPartida(nombre, puntuacion);
-            mostrarPartida(ctxInfo);
+            mostrarPartida();
 
             clearInterval(idRana);
             clearInterval(idAnimacion);
@@ -483,34 +540,32 @@ window.onload = function () {
             clearInterval(idCamion);
             clearInterval(idGeneraCoches);
             clearInterval(idCoches);
-        }, 2000);
+        }, 250);
+
     }
     // ------------------------
     //  PUNTUACIÓN
     // ------------------------
 
-    function obtenerTiempo(){
-        let tiempoFinal = Date.now();
-        let tiempoTotal = (tiempoFinal - tiempoInicio) / 1000; // tiempo en segundos
+    function obtenerTiempo() {
+        tiempoFinal = Date.now();
+        tiempoTotal = (tiempoFinal - tiempoInicio) / 1000; // tiempo en segundos
 
         return tiempoTotal.toFixed(2); //redondeo a dos decimales
     }
     // ------------------------
     //  BOTONES
     // ------------------------
-
     botonNuevaPartida = document.getElementById("nuevaPartida");
     botonNuevaPartida.onclick = comenzarJuego;
 
     botonPausar = document.getElementById("pausaPartida");
     botonPausar.onclick = pausarPartida;
 
-    botonReset = document.getElementById("reset").addEventListener("click", function(){
-        resetRecord();
-    });
+    botonReset = document.getElementById("reset");
+    botonReset.addEventListener("click", resetRecord);
 
-    /*     botonReanudar = document.getElementById("reanudarPartida");
-        botonReanudar.onclick = reanudarPartida;
-     */
+    botonReanudar = document.getElementById("reinicioPartida");
+    botonReanudar.onclick = reiniciarJuego;
 
 }

@@ -1,10 +1,10 @@
 function Coche(y_, tipo_){
-    this.x = 600;
+    this.x = 575;
     this.y = y_;
     this.acabado = false;
     this.tamañoX = 59;
     this.tamañoY  = 58;
-    this.velocidad = 1.15;
+    this.velocidad = 1.55;
     this.spriteCoche1 = [1, 1];
         //              1ºcoche  
     this.spriteCoche2 = [61, 1]; 
@@ -64,7 +64,7 @@ Coche.prototype.pintarCoches = function (ctx_){
 }
 
 Coche.prototype.moverCoches = function (){
-    this.x -= this.velocidad;
+    this.x -= this.velocidad * velocidadJuego;
 }
 
 Coche.prototype.desapareceDelMapa = function(){

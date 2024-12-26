@@ -3,11 +3,42 @@ const TOPEABAJO = 370;                          //tope del canvas abajo - tamañ
 const TOPEIZQUIERDA = 0;                        //tope del canvas izquierdo 
 const TOPEARRIBA = 0;                           //tope del canvas arriba
 
+let nombre = prompt("Introduce tu nombre:");
+let tiempoFinal, tiempoInicio, tiempoTotal;
+
+let xDerecha, xIzquierda, yArriba, yAbajo;      //variables de movimiento
+let vidas = 3;                                  //vidas de la rana
+
+let rana;                                       // Objeto rana
+let tortuga;                                    // Objeto tortuga
+let tronco;                                     // Objeto tronco
+let coche1;                                      // Objeto coche1
+let coche2;                                      // Objeto coche2
+let coche3;                                      // Objeto coche3
+let camion;                                     // Objeto camion
+
+let arrayTortugas = [];                         // Array de tortugas
+let arrayTroncos = [];                          // Array de troncos
+let arrayCoches = [];                           // Array de coches
+let arrayCamiones = [];                         // Array de camiones
+
+let botonNuevaPartida;                          // Boton para nueva partida
+let botonPausar;                                // Boton para pausar el juego
+let botonReanudar;                              // Boton para reanudar el juego
+let botonReset;                                 // Boton para resetear el historial de partidas
+
+let puntuacion;                                 // Puntuacion del juego
+
 let ctx, canvas;                                // contexto y canvas
 let canvasInfo, ctxInfo;                        // canvas y contexto del canvas secundario
 
 let Fondo = new Image ();
 Fondo.src = "./assets/img/mapa.png";            // mapa del juego
+
+const imgVidas = new Image();                   // imagen de las vidas
+imgVidas.src = "./assets/img/vida.png"; 
+
+let velocidadJuego = 1;                         // velocidad del juego
 
 let imagenRana, imagenTortuga, imagenTronco;    // variables de las imagenes de los objetos
 

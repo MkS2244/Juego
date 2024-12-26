@@ -1,7 +1,7 @@
 function Camion (y_){
-    this.x = -110;
+    this.x = -70;
     this.y = y_;
-    this.velocidad = 1.05;
+    this.velocidad = 1.55;
     this.acabado = false;
     this.tamañoX = 112;
     this.tamañoY = 56;
@@ -27,7 +27,7 @@ Camion.prototype.pintarCamion = function (ctx_){
 
 // para sacar los camiones de izquierda a derecha
 Camion.prototype.moverCamion = function (){
-    this.x += this.velocidad;
+    this.x += this.velocidad * velocidadJuego;
 }
 
 Camion.prototype.desapareceDelMapa = function(){
