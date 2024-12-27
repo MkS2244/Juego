@@ -8,7 +8,7 @@ function Rana() {
     this.posicion = 0;                                                          //posicion del sprite de la rana
     this.inicio = 0;                                                            //inicio del sprite de la rana
     this.estadoRana = EstadosRana.PARADA                                        //estado de la rana
-    this.velocidad = 5;
+    this.velocidadRana = 5;
 }
 
 // -------------------------------------------------------------
@@ -20,22 +20,22 @@ imagenRana.src = "assets/img/Rana.png";
 Rana.prototype.imagenRana = imagenRana;                     //CARGO EN EL PROTOTYPE LA IMAGEN DE LA RANA
 
 Rana.prototype.generaPosicionDerecha = function () {
-    this.x = this.x + this.velocidad;
+    this.x = this.x + this.velocidadRana;
     if (this.x > TOPEDERECHA) this.x = TOPEDERECHA;
 }
 
 Rana.prototype.generaPosicionIzquierda = function () {
-    this.x = this.x - this.velocidad;
+    this.x = this.x - this.velocidadRana;
     if (this.x < TOPEIZQUIERDA) this.x = TOPEIZQUIERDA;
 }
 
 Rana.prototype.generaPosicionArriba = function () {
-    this.y = this.y - this.velocidad;
+    this.y = this.y - this.velocidadRana;
     if (this.y < TOPEARRIBA) this.y = TOPEARRIBA;
 }
 
 Rana.prototype.generaPosicionAbajo = function () {
-    this.y = this.y + this.velocidad;
+    this.y = this.y + this.velocidadRana;
     if (this.y > TOPEABAJO) this.y = TOPEABAJO;
 }
 

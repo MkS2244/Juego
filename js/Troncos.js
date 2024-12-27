@@ -1,7 +1,7 @@
 function Tronco (y_){
     this.x = 600;
     this.y = y_;
-    this.velocidad = 1.25;
+    this.velocidadTronco = 1.25;
     this.acabado = false;
     this.tamañoX = 120;
     this.tamañoY = 60;
@@ -26,7 +26,7 @@ Tronco.prototype.pintarTronco = function(ctx_){
 
 // para sacar los troncos de derecha a izquierda
 Tronco.prototype.moverTronco = function (){
-    this.x -= this.velocidad * velocidadJuego;
+    this.x -= this.velocidadTronco * velocidadJuego;
 }
 
 Tronco.prototype.desapareceDelMapa = function(){

@@ -1,4 +1,8 @@
 window.onload = function () {
+    let dificultadJuego = document.getElementById('dificultad').addEventListener('change', function () {
+        dificultadJuego = this.value //actualizo la dificultad
+        console.log(`Dificultad del juego: ${dificultadJuego}`);
+    });                            //dificultad del juego
 
     function reproducirAudio(audio_) {
         audio_.currentTime = 0;
@@ -12,8 +16,7 @@ window.onload = function () {
 
     function guardarPartida(nombre, puntuacion) {
         puntuacion = obtenerTiempo();
-        //obtengo el tiempo de la partida 
-
+        //obtengo el tiempo de la partida en segundos
         // Para recuperar partidas que ya existen o inicializar un array vacío si no existen
         let partida = JSON.parse(localStorage.getItem("partida")) || [];
 
@@ -29,16 +32,14 @@ window.onload = function () {
     }
 
     function mostrarPartida() {
-        let partida = JSON.parse(localStorage.getItem("partida")) || [];
+        let partida = JSON.parse(localStorage.getItem("partida"));
         //limpio el canvas
         ctxInfo.clearRect(0, 0, 600, 100);
         ctxInfo.fillStyle = "white";
         ctxInfo.font = "20px Tiny5";
-
         ctxInfo.fillText("Historial de partidas", 10, 20);
-
         if (partida.length === 0) {
-            ctxInfo.fillText("No hay partidas", 10, 40);
+            ctxInfo.fillText("No hay partidas", 20, 20);
         } else {
             partida.forEach((partida, index) => {
                 ctxInfo.fillText(`${index + 1}. ${partida.nombre} - ${partida.puntuacion}`, 10, 40 + (index * 20));
@@ -62,7 +63,6 @@ window.onload = function () {
         y = 10;
 
         for (let i = 0; i < vidas; i++) {
-
             // (i *(tamañoImgVida + 5)) es para que las vidas no se pinten una encima de otra
             ctxInfo.drawImage(imgVidas, x, y + (i * (tamañoImgVida + 1)), tamañoImgVida - 10, tamañoImgVida - 10);
         }
@@ -84,12 +84,15 @@ window.onload = function () {
 
         vidas = 3;
         puntuacion = 0;
-        velocidadJuego = 2;
         juegoPausado = false;
         estamosMuertos = false;
 
         rana = new Rana();                                    // creo el Objeto rana
     }
+
+    // -------------------------------------------------
+    //  FUNCION PARA GENERAR LA ANIMACION DEL JUEGO
+    // -------------------------------------------------
 
     function generaTortugas() {
         let yPosiciones = [95, 150];
@@ -144,7 +147,22 @@ window.onload = function () {
     function generaCamiones() {
         let yPosiciones = [215, 285];
         // Posiciones en las que salen los camiones en el mapa
-        let delay = 8000;
+        let delay;
+        // Ajusto la salida de los camiones en función de la dificultad
+        switch (dificultadJuego) {
+            case "facil":
+                delay = 2000;
+                velocidadJuego = 2;
+                break;
+            case "medio":
+                delay = 1000;
+                velocidadJuego = 6;
+                break;
+            case "dificil":
+                delay = 500;
+                velocidadJuego = 9;
+                break;
+        }
 
         if (contadorCamion < 4) {
             let yPosicion = (contadorCamion < 2) ? yPosiciones[0] : yPosiciones[1];
@@ -167,10 +185,29 @@ window.onload = function () {
     function generaCoches() {
         let yPosiciones = [245, 320];
         // Posiciones en las que salen los coches en el mapa
-        let delayCoche1 = 3850;
-        let delayCoche2 = 2750;
-        let delayCoche3 = 1250;
+        let delayCoche1, delayCoche2, delayCoche3;
 
+        switch (dificultadJuego) {
+            case "facil":
+                delayCoche1 = 5000;
+                delayCoche2 = 6000;
+                delayCoche3 = 7000;
+                velocidadJuego = 2;
+                break;
+            case "medio":
+                delayCoche1 = 2000;
+                delayCoche2 = 2500;
+                delayCoche3 = 3000;
+                velocidadJuego = 6;
+                break;
+            case "dificil":
+                delayCoche1 = 500;
+                delayCoche2 = 1000;
+                delayCoche3 = 1500;
+                velocidadJuego = 9;
+                break;
+        }
+        // Diferentes tiempos de salida para los coches en función de la dificultad
         if (contadorCoches < 3) {
             let yPosicion = (contadorCoches < 1) ? yPosiciones[0] : yPosiciones[1];
 
@@ -266,87 +303,7 @@ window.onload = function () {
         }
     }
 
-    // -------------------------------------------------
-    //  COLISIONES DEL JUEGO
-    // -------------------------------------------------
-
-    function colisionCoche() {
-        let i = 0;
-
-        let rIzq = rana.x;
-        let rDer = rana.x + rana.tamañoX;
-        let rDown = rana.y;
-        let rUp = rana.y + rana.tamañoY;
-
-        do {
-            if (i >= arrayCoches.length) {
-                break;
-            }
-            let oIzq = Math.round(arrayCoches[i].x);
-            let oDer = Math.round(arrayCoches[i].x + arrayCoches[i].tamañoX - 20);
-            let oDown = Math.round(arrayCoches[i].y);
-            let oUp = Math.round(arrayCoches[i].y + arrayCoches[i].tamañoY - 20);
-
-            if ((rDer > oIzq) &&
-                (rIzq < oDer) &&
-                (rUp > oDown) &&
-                (rDown < oUp)) {
-                vidas--;
-                pintarVidas();
-
-                if (vidas <= 0) {
-                    estamosMuertos = true;
-                    reproducirAudio(audioAtropello);
-                    detenerJuego();
-                } 
-            } else {
-                i++;
-            }
-        } while (!estamosMuertos);
-
-        return estamosMuertos;
-    }
-
-    function colisionCamion() {
-        let i = 0;
-        let rIzq = rana.x;
-        let rDer = rana.x + rana.tamañoX;
-        let rDown = rana.y;
-        let rUp = rana.y + rana.tamañoY;
-
-        do {
-            if (i >= arrayCamiones.length) {
-                break;
-            }
-
-            let oIzq = Math.round(arrayCamiones[i].x);
-            let oDer = Math.round(arrayCamiones[i].x + arrayCamiones[i].tamañoX - 25);
-            let oDown = Math.round(arrayCamiones[i].y);
-            let oUp = Math.round(arrayCamiones[i].y + arrayCamiones[i].tamañoY - 25);
-
-            if ((rDer > oIzq) &&
-                (rIzq < oDer) &&
-                (rUp > oDown) &&
-                (rDown < oUp)) {
-                vidas--;
-                pintarVidas();
-
-                if (vidas <= 0) {
-                    estamosMuertos = true;
-                    reproducirAudio(audioAtropello);
-                    detenerJuego();
-                } 
-            } else {
-                i++;
-            }
-        } while (!estamosMuertos);
-
-        return estamosMuertos;
-    }
-
-    // -------------------------------------------------
-    //  FUNCION PARA GENERAR LA ANIMACION DEL JUEGO
-    // -------------------------------------------------
+    //colisiones(?)
 
     function generaAnimacionRana() {
         //pinto el mapa del juego
@@ -398,8 +355,11 @@ window.onload = function () {
             case 40: yAbajo = false; break;
         }
 
-        if (!xDerecha && !xIzquierda && !yArriba && !yAbajo) rana.estado = EstadosRana.PARADA; rana.estado = rana.inicio;
-        // si la rana no se mueve la pongo en la posicion de inicio
+        if (!xDerecha && !xIzquierda && !yArriba && !yAbajo) {
+            rana.estado = EstadosRana.PARADA;
+        }
+        // si la rana no se mueve la pongo en la posicion de inicial
+        // como si estuviera parada
 
     }
 
@@ -409,17 +369,10 @@ window.onload = function () {
 
     function pausarPartida() {
         juegoPausado = true;
-
-        clearInterval(idRana);
-        clearInterval(idAnimacion);
-        clearInterval(idGeneraTortugas);
-        clearInterval(idTortuga);
-        clearInterval(idGeneraTroncos);
-        clearInterval(idTronco);
-        clearInterval(idGeneraCamiones);
-        clearInterval(idCamion);
-        clearInterval(idGeneraCoches);
-        clearInterval(idCoches);
+        limpiarIntervalos();
+        botonNuevaPartida.disabled = false;
+        botonPausar.disabled = true;
+        botonReanudar.disabled = false;
 
         ctxInfo.fillStyle = "#33cc00";
         ctxInfo.font = "40px Tiny5";
@@ -455,9 +408,6 @@ window.onload = function () {
 
         idGeneraCoches = setInterval(generaCoches, 5800);
         idCoches = setInterval(muevoCoches, 1000 / 20);
-
-
-        //para que se reinicie el juego esperando 1 segundo.
     }
 
     // -------------------------------------------------
@@ -471,22 +421,24 @@ window.onload = function () {
         botonPausar.disabled = false;
         botonReanudar.disabled = false;
 
-        clearInterval(idRana);
-        clearInterval(idAnimacion);
-        clearInterval(idGeneraTortugas);
-        clearInterval(idTortuga);
-        clearInterval(idGeneraTroncos);
-        clearInterval(idTronco);
-        clearInterval(idGeneraCamiones);
-        clearInterval(idCamion);
-        clearInterval(idGeneraCoches);
-        clearInterval(idCoches);
+        switch (dificultadJuego) {
+            case "facil":
+                dificultadJuego = "facil";
+                break;
+            case "medio":
+                dificultadJuego = "medio";
+                break;
+            case "dificil":
+                dificultadJuego = "dificil";
+                break;
+        }
 
+        limpiarIntervalos();
         inicioDeVariables();
 
         ctx.clearRect(0, 0, 600, 400);
         ctxInfo.clearRect(0, 0, 600, 100);
-        
+
         // Para la gestion de la puntuación que será por tiempo
         tiempoInicio = Date.now();
 
@@ -500,10 +452,10 @@ window.onload = function () {
         idGeneraTroncos = setInterval(generaTroncos, 3000);
         idTronco = setInterval(muevoTroncos, 1000 / 20);
 
-        idGeneraCamiones = setInterval(generaCamiones, 7000);
+        idGeneraCamiones = setInterval(generaCamiones, 3000);
         idCamion = setInterval(muevoCamiones, 1000 / 20);
 
-        idGeneraCoches = setInterval(generaCoches, 5800);
+        idGeneraCoches = setInterval(generaCoches, 3000);
         idCoches = setInterval(muevoCoches, 1000 / 20);
 
         pintarVidas();
@@ -520,29 +472,32 @@ window.onload = function () {
 
     function detenerJuego() {
         textoGameOver();
-        botonReanudar.disabled = false;
+        botonReanudar.disabled = true;
         botonPausar.disabled = true;
         botonNuevaPartida.disabled = false;
 
         //para que se muestre primero el GAME OVER y
-        //despues la puntuacion con medio segundo de retraso
+        //despues la puntuacion con cierto retraso
         setTimeout(() => {
             guardarPartida(nombre, puntuacion);
             mostrarPartida();
-
-            clearInterval(idRana);
-            clearInterval(idAnimacion);
-            clearInterval(idGeneraTortugas);
-            clearInterval(idTortuga);
-            clearInterval(idGeneraTroncos);
-            clearInterval(idTronco);
-            clearInterval(idGeneraCamiones);
-            clearInterval(idCamion);
-            clearInterval(idGeneraCoches);
-            clearInterval(idCoches);
+            limpiarIntervalos();
         }, 250);
-
     }
+
+    function limpiarIntervalos() {
+        clearInterval(idRana);
+        clearInterval(idAnimacion);
+        clearInterval(idGeneraTortugas);
+        clearInterval(idTortuga);
+        clearInterval(idGeneraTroncos);
+        clearInterval(idTronco);
+        clearInterval(idGeneraCamiones);
+        clearInterval(idCamion);
+        clearInterval(idGeneraCoches);
+        clearInterval(idCoches);
+    }
+
     // ------------------------
     //  PUNTUACIÓN
     // ------------------------
@@ -553,6 +508,7 @@ window.onload = function () {
 
         return tiempoTotal.toFixed(2); //redondeo a dos decimales
     }
+
     // ------------------------
     //  BOTONES
     // ------------------------
@@ -567,5 +523,4 @@ window.onload = function () {
 
     botonReanudar = document.getElementById("reinicioPartida");
     botonReanudar.onclick = reiniciarJuego;
-
 }

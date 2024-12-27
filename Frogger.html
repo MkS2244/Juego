@@ -10,6 +10,8 @@
         <script src="./js/Troncos.js"></script>
         <script src="./js/Tortuga.js"></script>
         <script src="./js/Rana.js"></script>
+        <script src="./js/Colisiones.js"></script>
+        <script src="./js/Teclas.js"></script>
         <script src="Frogger.js"></script>
         <link rel="stylesheet" href="Frogger.css">
         <title>Frogger</title>
@@ -22,9 +24,19 @@
             <button id="reset">Restablecer récord</button>
             <button class="botones" id="nuevaPartida">Nueva Partida</button>
         </section><br>
-        <div id="canvasJuego">
-            <canvas id="miCanvas" width="600" height="400"></canvas>
-            <canvas id="infoCanvas" width="600" height="100"></canvas>
+        <div id="contenedorJuego">
+            <div id="canvasJuego">
+                <canvas id="miCanvas" width="600" height="400"></canvas>
+                <canvas id="infoCanvas" width="600" height="100"></canvas>
+            </div>
+            <div id="sectionDificultad">
+                <h4>Selecciona la dificultad: </h4> <br>
+                <select name="NivelDificultad" id="dificultad">
+                    <option value="facil">Fácil</option>
+                    <option value="medio" selected>Medio</option>
+                    <option value="dificil">Difícil</option>
+                </select>
+            </div>
         </div>
         <p>
             Controles del juego:

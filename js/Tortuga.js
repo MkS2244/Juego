@@ -1,7 +1,7 @@
 function Tortuga ( y_){
     this.x = -32;
     this.y = y_;
-    this.velocidad = 1.15;
+    this.velocidadTortuga = 1.15;
     this.acabado = false;
     this.tamañoX = 16;
     this.tamañoY = 16;
@@ -27,7 +27,7 @@ Tortuga.prototype.pintarTortuga = function(ctx){
 
 // para sacar las tortugas de izquierda a derecha
 Tortuga.prototype.moverTortuga = function (){
-    this.x += this.velocidad * velocidadJuego;
+    this.x += this.velocidadTortuga * velocidadJuego;
 }
 
 Tortuga.prototype.desapareceDelMapa = function(){
