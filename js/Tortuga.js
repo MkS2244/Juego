@@ -19,8 +19,8 @@ Tortuga.prototype.pintarTortuga = function(ctx){
         this.tamañoY,
         this.x,
         this.y,
-        this.tamañoX+16,
-        this.tamañoY+16
+        this.tamañoX+20,
+        this.tamañoY+20
     );
     // Pinto la tortuga asi para poder aumentarle el tamaño y que no se vea tan pequeña
 }

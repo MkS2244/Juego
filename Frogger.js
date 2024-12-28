@@ -1,4 +1,7 @@
 window.onload = function () {
+
+    // GESTIONAR LAS VIDAS. HACER QUE SE MUEVA CON LOS TRONCOS Y TORTUGAS   
+
     let dificultadJuego = document.getElementById('dificultad').addEventListener('change', function () {
         dificultadJuego = this.value //actualizo la dificultad
         console.log(`Dificultad del juego: ${dificultadJuego}`);
@@ -86,8 +89,9 @@ window.onload = function () {
         puntuacion = 0;
         juegoPausado = false;
         estamosMuertos = false;
-
         rana = new Rana();                                    // creo el Objeto rana
+        rana.EstadosRana = "viva";                            // inicializo el estado de la rana
+
     }
 
     // -------------------------------------------------
@@ -303,7 +307,149 @@ window.onload = function () {
         }
     }
 
-    //colisiones(?)
+    // -------------------------------------------------
+    //  COLISIONES DEL JUEGO
+    // -------------------------------------------------
+
+    function colisionCoche() {
+        let i = 0;
+
+        let rIzq = rana.x;
+        let rDer = rana.x + rana.tamañoX;
+        let rDown = rana.y;
+        let rUp = rana.y + rana.tamañoY;
+
+        do {
+            if (i >= arrayCoches.length) {
+                break;
+            }
+            let oIzq = Math.round(arrayCoches[i].x);
+            let oDer = Math.round(arrayCoches[i].x + arrayCoches[i].tamañoX - 20);
+            let oDown = Math.round(arrayCoches[i].y);
+            let oUp = Math.round(arrayCoches[i].y + arrayCoches[i].tamañoY - 20);
+
+            if ((rDer > oIzq) &&
+                (rIzq < oDer) &&
+                (rUp > oDown) &&
+                (rDown < oUp)) {
+                vidas--;
+                pintarVidas();
+
+                if (vidas <= 0) {
+                    estamosMuertos = true;
+                    reproducirAudio(audioAtropello);
+                    detenerJuego();
+                }
+            } else {
+                i++;
+            }
+        } while (!estamosMuertos);
+
+        return estamosMuertos;
+    }
+
+    function colisionCamion() {
+        let i = 0;
+        let rIzq = rana.x;
+        let rDer = rana.x + rana.tamañoX;
+        let rDown = rana.y;
+        let rUp = rana.y + rana.tamañoY;
+
+        do {
+            if (i >= arrayCamiones.length) {
+                break;
+            }
+
+            let oIzq = Math.round(arrayCamiones[i].x);
+            let oDer = Math.round(arrayCamiones[i].x + arrayCamiones[i].tamañoX - 25);
+            let oDown = Math.round(arrayCamiones[i].y);
+            let oUp = Math.round(arrayCamiones[i].y + arrayCamiones[i].tamañoY - 25);
+
+            if ((rDer > oIzq) &&
+                (rIzq < oDer) &&
+                (rUp > oDown) &&
+                (rDown < oUp)) {
+                vidas--;
+                pintarVidas();
+
+                if (vidas <= 0) {
+                    estamosMuertos = true;
+                    reproducirAudio(audioAtropello);
+                    detenerJuego();
+                }
+            } else {
+                i++;
+            }
+        } while (!estamosMuertos);
+
+        return estamosMuertos;
+    }
+    //esta función de colision a la que le paso un objeto, no la puedo utilizar para los coches y camiones porque no tienen el mismo
+    //tamaño que las tortugas y los troncos, entonces la colision no se produce correctamente
+    function colision(objeto) {
+        let i = 0;
+        let rIzq = rana.x;
+        let rDer = rana.x + rana.tamañoX;
+        let rDown = rana.y;
+        let rUp = rana.y + rana.tamañoY;
+
+        do {
+            if (i >= objeto.length) {
+                break;
+            }
+
+            let oIzq = Math.round(objeto.x);
+            let oDer = Math.round(objeto.x + objeto.tamañoX - 20);
+            let oDown = Math.round(objeto.y);
+            let oUp = Math.round(objeto.y + objeto.tamañoY - 20);
+
+            if ((rDer > oIzq) &&
+                (rIzq < oDer) &&
+                (rUp > oDown) &&
+                (rDown < oUp)) {
+                
+                rana.y = objeto.y;
+                rana.x += objeto.velocidadTronco * velocidadJuego;
+                rana.x += objeto.velocidadTortuga * velocidadJuego;
+                //actualizo la posición de la rana para que se mueva con el tronco/tortuga
+
+                return;
+            } else {
+                i++;
+            }
+        } while (!estamosMuertos);
+
+        return estamosMuertos;
+    }
+
+    function colisionAgua() {
+        // si la rana se encuentra en estas posiciones que es la zona del agua
+        if (rana.y < 160 && rana.y > 35) {
+            estamosMuertos = true;
+            rana.EstadosRana = "muerta";
+            // compruebo si hay colision con algun tronco
+            for (let i = 0; i < arrayTroncos.length; i++) {
+                if (colision(arrayTroncos[i])) {
+                    estamosMuertos = false; // Y ahora se encuentra a salvo
+                    rana.EstadosRana = "viva";
+                    break;
+                }
+            }
+
+            for (let j = 0; j < arrayTortugas.length; j++) {
+                if (colision(arrayTortugas[j])) {
+                    rana.EstadosRana = "viva";
+                    estamosMuertos = false;
+                    break;
+                }
+            }
+            // Si ha pasado por esa posición y no ha habido ninguna colisión con algun tronco la rana muere
+            if (rana.EstadosRana === "muerta") {
+                estamosMuertos = true;
+                
+            }
+        }
+    }
 
     function generaAnimacionRana() {
         //pinto el mapa del juego
@@ -315,6 +461,12 @@ window.onload = function () {
         if (colisionCoche() || colisionCamion()) {
             console.log("Partida terminada");
             detenerJuego();
+            botonNuevaPartida.disabled = false;
+            botonPausar.disabled = true;
+        }
+
+        if (colisionAgua()) {
+            console.log("Partida terminada");
             botonNuevaPartida.disabled = false;
             botonPausar.disabled = true;
         }
@@ -336,8 +488,9 @@ window.onload = function () {
             // Down arrow
             case 40: yAbajo = true; rana.estado = EstadosRana.MOVIMIENTO; break;
         }
-
         animacionRana();
+
+
 
     }
 

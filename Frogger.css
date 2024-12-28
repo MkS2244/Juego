@@ -77,7 +77,7 @@ section button {
 
 }
 
-button {
+button, option, select {
 
    border-color: yellowgreen;
 
@@ -85,4 +85,9 @@ button {
 
    background-color: rgb(217, 217, 217);
 
+}
+
+h4, p{
+   color: yellowgreen;
+   text-shadow: 1px 1px 0 #9226d9, -1px -1px 0 #9226d9;
 }

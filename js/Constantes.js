@@ -64,7 +64,9 @@ let estamosMuertos = false;                     // variable para saber si estamo
 
 const EstadosRana = {
     PARADA: "parada",
-    MOVIMIENTO: "movimiento"
+    MOVIMIENTO: "movimiento",
+    VIVA: "viva", 
+    MUERTA: "muerta"
 };
 
 const audioSaltoRana = new Audio();
