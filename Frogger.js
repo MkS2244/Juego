@@ -108,7 +108,8 @@ window.onload = function () {
             // Calculo la posicion Y para que las tortugas salgan en las dos filas
             let yPosicion = (contadorTortuga < 3) ? yPosiciones[0] : yPosiciones[1];
             for (let i = 0; i < 3; i++) {
-
+                //le añado un delay para que salgan las tortugas de una en una 
+                //y las meto en el array de tortugas
                 setTimeout(() => {
                     tortuga = new Tortuga(yPosicion);
                     arrayTortugas.push(tortuga);
@@ -145,6 +146,7 @@ window.onload = function () {
         // console.table("TRONCOS ", arrayTroncos);
         if (contadorTroncos === 6) {
             contadorTroncos = 0;
+            //reseteo el contador de troncos a 0
         }
     }
 
@@ -170,7 +172,8 @@ window.onload = function () {
 
         if (contadorCamion < 4) {
             let yPosicion = (contadorCamion < 2) ? yPosiciones[0] : yPosiciones[1];
-
+            //genero los camiones de dos en dos y les añado un delay para que salgan de uno en uno
+            //en las posiciones que he calculado en la linea 154
             for (let i = 0; i < 2; i++) {
 
                 setTimeout(() => {
@@ -211,6 +214,7 @@ window.onload = function () {
                 velocidadJuego = 9;
                 break;
         }
+        
         // Diferentes tiempos de salida para los coches en función de la dificultad
         if (contadorCoches < 3) {
             let yPosicion = (contadorCoches < 1) ? yPosiciones[0] : yPosiciones[1];
@@ -409,48 +413,65 @@ window.onload = function () {
                 (rDown < oUp)) {
                 
                 rana.y = objeto.y;
-                rana.x += objeto.velocidadTronco * velocidadJuego;
-                rana.x += objeto.velocidadTortuga * velocidadJuego;
+                rana.x += (objeto.velocidadTronco || objeto.velocidadTortuga) * velocidadJuego;
                 //actualizo la posición de la rana para que se mueva con el tronco/tortuga
 
-                return;
+                return true;
             } else {
                 i++;
+                
             }
         } while (!estamosMuertos);
 
-        return estamosMuertos;
+        return false;
     }
 
     function colisionAgua() {
         // si la rana se encuentra en estas posiciones que es la zona del agua
         if (rana.y < 160 && rana.y > 35) {
-            estamosMuertos = true;
             rana.EstadosRana = "muerta";
-            // compruebo si hay colision con algun tronco
-            for (let i = 0; i < arrayTroncos.length; i++) {
-                if (colision(arrayTroncos[i])) {
-                    estamosMuertos = false; // Y ahora se encuentra a salvo
-                    rana.EstadosRana = "viva";
-                    break;
-                }
-            }
+            let estaAsalvo = false;
+            let i= 0;
 
-            for (let j = 0; j < arrayTortugas.length; j++) {
-                if (colision(arrayTortugas[j])) {
-                    rana.EstadosRana = "viva";
-                    estamosMuertos = false;
+            do {
+                if (i >= arrayTroncos.length) {
                     break;
                 }
+                if (colision(arrayTroncos[i])) {
+                    estaAsalvo = true;
+                    rana.EstadosRana = "viva";
+                    break; // Si hay colisión, no seguimos comprobando
+                }
+                i++;
+            } while (!estamosMuertos);
+
+            // Si no se salvó con un tronco, comprobamos las tortugas
+            let j = 0;
+            if (!estaAsalvo) {
+                do {
+                    if (j >= arrayTortugas.length) {
+                        break;
+                    }
+                    if (colision(arrayTortugas[j])) {
+                        estaAsalvo = true;
+                        rana.EstadosRana = "viva";
+                        break; // Si hay colisión, no seguimos comprobando
+                    }
+                    j++;
+                } while (!estaAsalvo);
             }
             // Si ha pasado por esa posición y no ha habido ninguna colisión con algun tronco la rana muere
-            if (rana.EstadosRana === "muerta") {
+            if (!estaAsalvo) {
+                rana.EstadosRana = "muerta";
                 estamosMuertos = true;
-                
+            } else{
+                rana.EstadosRana = "viva";
+                estamosMuertos = false;
             }
         }
     }
-
+    
+    
     function generaAnimacionRana() {
         //pinto el mapa del juego
         pintarFondo(ctx);
@@ -464,9 +485,10 @@ window.onload = function () {
             botonNuevaPartida.disabled = false;
             botonPausar.disabled = true;
         }
-
-        if (colisionAgua()) {
-            console.log("Partida terminada");
+        colisionAgua();
+        if (estamosMuertos){
+            console.log("La has cagao");
+            detenerJuego();
             botonNuevaPartida.disabled = false;
             botonPausar.disabled = true;
         }
@@ -489,8 +511,6 @@ window.onload = function () {
             case 40: yAbajo = true; rana.estado = EstadosRana.MOVIMIENTO; break;
         }
         animacionRana();
-
-
 
     }
 
