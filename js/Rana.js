@@ -9,6 +9,7 @@ function Rana() {
     this.inicio = 0;                                                            //inicio del sprite de la rana
     this.estadoRana = EstadosRana.PARADA                                        //estado de la rana
     this.velocidadRana = 5;
+    this.vidas = 3;
 }
 
 // -------------------------------------------------------------
@@ -18,6 +19,12 @@ function Rana() {
 imagenRana = new Image();
 imagenRana.src = "assets/img/Rana.png";
 Rana.prototype.imagenRana = imagenRana;                     //CARGO EN EL PROTOTYPE LA IMAGEN DE LA RANA
+
+//Función para resetear la posicion de la rana
+Rana.prototype.reset = function () {
+    this.x = 1 + (Math.round(Math.random() * 569));
+    this.y = 370;
+}
 
 Rana.prototype.generaPosicionDerecha = function () {
     this.x = this.x + this.velocidadRana;

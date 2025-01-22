@@ -6,8 +6,7 @@ const TOPEARRIBA = 0;                           //tope del canvas arriba
 let nombre = prompt("Introduce tu nombre:");
 let tiempoFinal, tiempoInicio, tiempoTotal;
 
-let xDerecha, xIzquierda, yArriba, yAbajo;      //variables de movimiento
-let vidas = 3;                                  //vidas de la rana
+let xDerecha, xIzquierda, yArriba, yAbajo;      //variables de movimiento de la rana
 
 let rana;                                       // Objeto rana
 let tortuga;                                    // Objeto tortuga
