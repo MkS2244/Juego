@@ -1,7 +1,7 @@
 function Tronco (y_){
     this.x = 600;
     this.y = y_;
-    this.velocidadTronco = 1.25;
+    this.velocidad = 1.25;
     this.acabado = false;
     this.tamañoX = 120;
     this.tamañoY = 60;

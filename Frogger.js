@@ -1,6 +1,4 @@
-window.onload = function () {
-
-    // GESTIONAR LAS VIDAS. HACER QUE SE MUEVA CON LOS TRONCOS Y TORTUGAS   
+window.onload = function () {  
 
     let dificultadJuego = document.getElementById('dificultad').addEventListener('change', function () {
         dificultadJuego = this.value //actualizo la dificultad
@@ -60,11 +58,10 @@ window.onload = function () {
 
     function pintarVidas() {
         //posicion en la que quiero que se pinten las vidas
-        let x, y, tamañoImgVida = 30;
-        x = 500;
-        y = 10;
-        ctx.clearRect(0, 0, 600, 100);
-        
+        let x = 500, y= 10, tamañoImgVida = 30;
+
+        ctxInfo.clearRect(0, 0, 600, 100);
+
         for (let i = 0; i < vidas; i++) {
             // (i *(tamañoImgVida + 5)) es para que las vidas no se pinten una encima de otra
             ctxInfo.drawImage(imgVidas, x, y + (i * (tamañoImgVida + 1)), tamañoImgVida - 10, tamañoImgVida - 10);
@@ -225,20 +222,20 @@ window.onload = function () {
 
             // genero el coche 1
             setTimeout(() => {
-                coche1 = new Coche(yPosicion, "coche1");
-                arrayCoches.push(coche1);
+                coche = new Coche(yPosicion, "coche1");
+                arrayCoches.push(coche);
             }, delayCoche1);
 
             // genero el coche 2
             setTimeout(() => {
-                coche2 = new Coche(yPosicion, "coche2");
-                arrayCoches.push(coche2);
+                coche = new Coche(yPosicion, "coche2");
+                arrayCoches.push(coche);
             }, delayCoche2);
 
             // genero el coche 3
             setTimeout(() => {
-                coche3 = new Coche(yPosicion, "coche3");
-                arrayCoches.push(coche3);
+                coche = new Coche(yPosicion, "coche3");
+                arrayCoches.push(coche);
             }, delayCoche3);
 
             contadorCoches++;
@@ -320,199 +317,23 @@ window.onload = function () {
     }
 
     // -------------------------------------------------
-    //  COLISIONES DEL JUEGO
+    //  FUNCION QUE COMPRUEBA SI LA RANA GANA
     // -------------------------------------------------
-    // Tanto ajusteX como ajusteY son para que la colisión sea más precisa. Ya que ambos objetos no tienen el mismo tamaño.
 
-    function colision(objetos, ajusteX, ajusteY) {
-        let i = 0;
-        let colisionDetectada = false;
-      
-        let rIzq = rana.x;
-        let rDer = rana.x + rana.tamañoX;
-        let rDown = rana.y;
-        let rUp = rana.y + rana.tamañoY;
-      
-        do {
-          if (i >= objetos.length) {
-            break;
-          }
-      
-          let oIzq = Math.round(objetos[i].x);
-          let oDer = Math.round(objetos[i].x + objetos[i].tamañoX - ajusteX);
-          let oDown = Math.round(objetos[i].y);
-          let oUp = Math.round(objetos[i].y + objetos[i].tamañoY - ajusteY);
-      
-          if (
-            rDer > oIzq &&
-            rIzq < oDer &&
-            rUp > oDown &&
-            rDown < oUp
-          ) {
-            rana.vidas--;
-            pintarVidas();
-      
-            /* if (rana.vidas <= 0) {
-              estamosMuertos = true;
-              reproducirAudio('path/to/audioAtropello.mp3');
-              detenerJuego();
-            } else {
-                rana.reset();
-            } */
+    function haGanado() {
+        if (rana.x === 0) {
+            console.log("HAS GANADO");
+            puntuacion = obtenerTiempo();
+            guardarPartida(nombre, puntuacion);
+            mostrarPartida();
+            limpiarIntervalos();
 
-            colisionDetectada = true;
-          } else {
-            i++;
-          }
-        } while (!estamosMuertos && !colisionDetectada);
-      
-        return colisionDetectada;
-    }
-
-    function manejarColisiones () {
-        if (estamosMuertos) return;
-
-        if (colision(arrayCoches, 20, 20) || colision(arrayCamiones, 20, 20)) {
-            detenerJuego();
-            reproducirAudio(audioAtropello);
-        }
-
-        let ranaFlotando = colision(arrayTroncos, 20, 20) || colision(arrayTortugas, 20, 20);
-
-        if (rana.y < 160 && rana.y > 35 && !ranaFlotando) {
-            rana.vidas--;
-            pintarVidas();
-            rana.reset();
-
-            if (rana.vidas <= 0 ){
-                estamosMuertos = true;
-                reproducirAudio(audioAtropello);
-                detenerJuego();
-                textoGameOver();
-            }
+            ctxInfo.fillStyle = "#33cc00";
+            ctxInfo.font = "40px Tiny5";
+            ctxInfo.fillText("YOU WIN!", 600 / 2 - 100, 100 / 2);
         }
     }
-
- /*    function colision(objetos, ajusteX, ajusteY) {
-        let i = 0;
-    
-        let rIzq = rana.x;
-        let rDer = rana.x + rana.tamañoX;
-        let rDown = rana.y;
-        let rUp = rana.y + rana.tamañoY;
-    
-        do {
-            if (i >= objetos.length) {
-                break;
-            }
-    
-            let oIzq = Math.round(objetos[i].x);
-            let oDer = Math.round(objetos[i].x + objetos[i].tamañoX - ajusteX);
-            let oDown = Math.round(objetos[i].y);
-            let oUp = Math.round(objetos[i].y + objetos[i].tamañoY - ajusteY);
-    
-            if ((rDer > oIzq) &&
-                (rIzq < oDer) &&
-                (rUp > oDown) &&
-                (rDown < oUp)) {
-                vidas--;
-                pintarVidas();
-    
-                if (vidas <= 0) {
-                    estamosMuertos = true;
-                    reproducirAudio(audioAtropello);
-                    detenerJuego();
-                }
-            } else {
-                i++;
-            }
-        } while (!estamosMuertos);
-    
-        return estamosMuertos;
-    }
-    //esta función de colision a la que le paso un objeto, no la puedo utilizar para los coches y camiones porque no tienen el mismo
-    //tamaño que las tortugas y los troncos, entonces la colision no se produce correctamente
-    function colision(objeto) {
-        let i = 0;
-        let rIzq = rana.x;
-        let rDer = rana.x + rana.tamañoX;
-        let rDown = rana.y;
-        let rUp = rana.y + rana.tamañoY;
-
-        do {
-            if (i >= objeto.length) {
-                break;
-            }
-
-            let oIzq = Math.round(objeto.x);
-            let oDer = Math.round(objeto.x + objeto.tamañoX - 20);
-            let oDown = Math.round(objeto.y);
-            let oUp = Math.round(objeto.y + objeto.tamañoY - 20);
-
-            if ((rDer > oIzq) &&
-                (rIzq < oDer) &&
-                (rUp > oDown) &&
-                (rDown < oUp)) {
-
-                rana.y = objeto.y;
-                rana.x += (objeto.velocidadTronco || objeto.velocidadTortuga) * velocidadJuego;
-                //actualizo la posición de la rana para que se mueva con el tronco/tortuga
-
-                return true;
-            } else {
-                i++;
-
-            }
-        } while (!estamosMuertos);
-
-        return false;
-    }
-
-    function colisionAgua() {
-        // si la rana se encuentra en estas posiciones que es la zona del agua
-        if (rana.y < 160 && rana.y > 35) {
-            rana.EstadosRana = "muerta";
-            let estaAsalvo = false;
-            let i = 0;
-
-            do {
-                if (i >= arrayTroncos.length) {
-                    break;
-                }
-                if (colision(arrayTroncos[i])) {
-                    estaAsalvo = true;
-                    rana.EstadosRana = "viva";
-                    break; // Si hay colisión, no seguimos comprobando
-                }
-                i++;
-            } while (!estamosMuertos);
-
-            // Si no se salvó con un tronco, comprobamos las tortugas
-            let j = 0;
-            if (!estaAsalvo) {
-                do {
-                    if (j >= arrayTortugas.length) {
-                        break;
-                    }
-                    if (colision(arrayTortugas[j])) {
-                        estaAsalvo = true;
-                        rana.EstadosRana = "viva";
-                        break; // Si hay colisión, no seguimos comprobando
-                    }
-                    j++;
-                } while (!estaAsalvo);
-            }
-            // Si ha pasado por esa posición y no ha habido ninguna colisión con algun tronco la rana muere
-            if (!estaAsalvo) {
-                rana.EstadosRana = "muerta";
-                estamosMuertos = true;
-            } else {
-                rana.EstadosRana = "viva";
-                estamosMuertos = false;
-            }
-        }
-    } */
-
+    haGanado();
 
     function generaAnimacionRana() {
         //pinto el mapa del juego
@@ -521,7 +342,7 @@ window.onload = function () {
         //Muevo los objetos del juego (troncos, tortugas y coches)
         rana.pintar(ctx);
 
-        manejarColisiones();
+        //manejarColisiones();
     }
 
     // -------------------------------------------------
@@ -660,6 +481,8 @@ window.onload = function () {
 
         idGeneraCoches = setInterval(generaCoches, 3000);
         idCoches = setInterval(muevoCoches, 1000 / 20);
+
+        manejarColisiones();            //para comprobar las colisiones del juego
 
         pintarVidas();
         // Evento para saber cuando se presiona una tecla

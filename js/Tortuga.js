@@ -1,7 +1,7 @@
 function Tortuga ( y_){
     this.x = -32;
     this.y = y_;
-    this.velocidadTortuga = 1.15;
+    this.velocidad = 1.15;
     this.acabado = false;
     this.tamañoX = 16;
     this.tamañoY = 16;

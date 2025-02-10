@@ -11,9 +11,7 @@ let xDerecha, xIzquierda, yArriba, yAbajo;      //variables de movimiento de la 
 let rana;                                       // Objeto rana
 let tortuga;                                    // Objeto tortuga
 let tronco;                                     // Objeto tronco
-let coche1;                                     // Objeto coche1
-let coche2;                                     // Objeto coche2
-let coche3;                                     // Objeto coche3
+let coche;                                     // Objeto coche1
 let camion;                                     // Objeto camion
 
 let arrayTortugas = [];                         // Array de tortugas
