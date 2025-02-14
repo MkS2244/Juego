@@ -9,14 +9,13 @@ function Rana() {
     this.inicio = 0;                                                            //inicio del sprite de la rana
     this.estadoRana = EstadosRana.PARADA                                        //estado de la rana
     this.velocidadRana = 5;
-    this.vidas = 3;
 }
 
 // -------------------------------------------------------------
 //  CREO LAS FUNCIONES DE LA RANA (MOVIMIENTO, PINTAR Y DIBUJAR)
 // -------------------------------------------------------------
 
-imagenRana = new Image();
+const imagenRana = new Image();
 imagenRana.src = "assets/img/Rana.png";
 Rana.prototype.imagenRana = imagenRana;                     //CARGO EN EL PROTOTYPE LA IMAGEN DE LA RANA
 

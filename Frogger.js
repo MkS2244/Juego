@@ -1,4 +1,4 @@
-window.onload = function () {  
+window.onload = function () {
 
     let dificultadJuego = document.getElementById('dificultad').addEventListener('change', function () {
         dificultadJuego = this.value //actualizo la dificultad
@@ -58,13 +58,33 @@ window.onload = function () {
 
     function pintarVidas() {
         //posicion en la que quiero que se pinten las vidas
-        let x = 500, y= 10, tamañoImgVida = 30;
-
+        let x = 500, y = 10, tamañoImgVida = 33, separacion = 5;
         ctxInfo.clearRect(0, 0, 600, 100);
 
         for (let i = 0; i < vidas; i++) {
-            // (i *(tamañoImgVida + 5)) es para que las vidas no se pinten una encima de otra
-            ctxInfo.drawImage(imgVidas, x, y + (i * (tamañoImgVida + 1)), tamañoImgVida - 10, tamañoImgVida - 10);
+            // aumenta la X en cada iteracion para que se pinten las vidas
+            ctxInfo.drawImage(
+                imgVidas, 
+                x + (i * (tamañoImgVida -10 + separacion)),
+                y, 
+                tamañoImgVida - 10,
+                tamañoImgVida - 10
+            );
+        }
+    }
+    
+
+    function perderVida() {
+        if (vidas > 0) {
+            vidas--; // Restar 1 al número (no usar pop())
+            pintarVidas();
+    
+            if (vidas === 0) {
+                estamosMuertos = true;
+                reproducirAudio(audioAtropello);
+                textoGameOver();
+                detenerJuego();
+            }
         }
     }
 
@@ -82,9 +102,8 @@ window.onload = function () {
         ctx = canvas.getContext('2d');                          // obtengo el contexto del canvas
         ctxInfo = canvasInfo.getContext('2d');                  // obtengo el contexto del canvas secundario
 
-        arrayTortugas = [];                                   // inicializo el array de tortugas
-        arrayTroncos = [];                                    // inicializo el array de troncos
         arrayCoches = [];                                     // inicializo el array de coches
+        arrayCamiones = [];                                   // inicializo el array de camiones
 
         vidas = 3;
         puntuacion = 0;
@@ -99,83 +118,30 @@ window.onload = function () {
     //  FUNCION PARA GENERAR LOS OBJETOS DEL JUEGO
     // -------------------------------------------------
 
-    function generaTortugas() {
-        let yPosiciones = [95, 150];
-        // Posiciones en las que salen las tortugas en el mapa
-        let delay = 1000;
-
-        if (contadorTortuga < 6) {
-
-            // Calculo la posicion Y para que las tortugas salgan en las dos filas
-            let yPosicion = (contadorTortuga < 3) ? yPosiciones[0] : yPosiciones[1];
-            for (let i = 0; i < 3; i++) {
-                //le añado un delay para que salgan las tortugas de una en una 
-                //y las meto en el array de tortugas
-                setTimeout(() => {
-                    tortuga = new Tortuga(yPosicion);
-                    arrayTortugas.push(tortuga);
-                }, i * delay);
-
-                //el delay aumenta con cada iteración del bucle
-            }
-            contadorTortuga += 3;
-        }
-
-        // Reinicio el contador 
-        if (contadorTortuga === 6) {
-            contadorTortuga = 0;
-        }
-        // console.table("Tortugas", arrayTortugas)
-    }
-
-    function generaTroncos() {
-        let yPosiciones = [39, 70, 130];
-        // Posiciones en las que salen los troncos en el mapa
-        let delay = 1000;
-
-        if (contadorTroncos < 6) {
-
-            for (let i = 0; i < 3; i++) {
-                let yPosicion = yPosiciones[i];
-                setTimeout(() => {
-                    tronco = new Tronco(yPosicion);
-                    arrayTroncos.push(tronco);
-                }, i * delay);
-            }
-            contadorTroncos += 3;
-        }
-        // console.table("TRONCOS ", arrayTroncos);
-        if (contadorTroncos === 6) {
-            contadorTroncos = 0;
-            //reseteo el contador de troncos a 0
-        }
-    }
 
     function generaCamiones() {
-        let yPosiciones = [215, 285];
+        let yPosiciones = [285, 215, 150, 80];
         // Posiciones en las que salen los camiones en el mapa
         let delay;
         // Ajusto la salida de los camiones en función de la dificultad
-        switch (dificultadJuego) {
-            case "facil":
-                delay = 2000;
-                velocidadJuego = 2;
-                break;
-            case "medio":
-                delay = 1000;
-                velocidadJuego = 6;
-                break;
-            case "dificil":
-                delay = 500;
-                velocidadJuego = 9;
-                break;
-        }
+        if (contadorCamion < 4) {       
+            switch (dificultadJuego) {
+                case "facil":
+                    delay = 1000;
+                    velocidadJuego = 3;
+                    break;
+                case "medio":
+                    delay = 500;
+                    velocidadJuego = 8;
+                    break;
+                case "dificil":
+                    delay = 250;
+                    velocidadJuego = 11;
+                    break;
+            }
 
-        if (contadorCamion < 4) {
-            let yPosicion = (contadorCamion < 2) ? yPosiciones[0] : yPosiciones[1];
-            //genero los camiones de dos en dos y les añado un delay para que salgan de uno en uno
-            //en las posiciones que he calculado en la linea 154
             for (let i = 0; i < 2; i++) {
+                let yPosicion = yPosiciones[contadorCamion + i];
 
                 setTimeout(() => {
                     camion = new Camion(yPosicion);
@@ -191,83 +157,64 @@ window.onload = function () {
     }
 
     function generaCoches() {
-        let yPosiciones = [245, 320];
-        // Posiciones en las que salen los coches en el mapa
-        let delayCoche1, delayCoche2, delayCoche3;
+        /* let yPosiciones = [39, 70, 130 ,245, 320]; */
+        let yPosiciones = [320, 245, 115, 39];
+        let delayC1, delayC2, delayC3;
 
-        switch (dificultadJuego) {
-            case "facil":
-                delayCoche1 = 5000;
-                delayCoche2 = 6000;
-                delayCoche3 = 7000;
-                velocidadJuego = 2;
-                break;
-            case "medio":
-                delayCoche1 = 2000;
-                delayCoche2 = 2500;
-                delayCoche3 = 3000;
-                velocidadJuego = 6;
-                break;
-            case "dificil":
-                delayCoche1 = 500;
-                delayCoche2 = 1000;
-                delayCoche3 = 1500;
-                velocidadJuego = 9;
-                break;
-        }
+        if (contadorCoches < 4) {
+            let yPosicion = yPosiciones[contadorCoches];
 
-        // Diferentes tiempos de salida para los coches en función de la dificultad
-        if (contadorCoches < 3) {
-            let yPosicion = (contadorCoches < 1) ? yPosiciones[0] : yPosiciones[1];
+            switch (dificultadJuego) {
+                case "facil":
+                    delayC1 = 2000;
+                    delayC2 = 2500;
+                    delayC3 = 3000;
+                    velocidadJuego = 3;
+                    break;
+                case "medio":
+                    delayC1 = 1000;
+                    delayC2 = 1500;
+                    delayC3 = 2000;
+                    velocidadJuego = 8;
+                    break;
+                case "dificil":
+                    delayC1 = 500;
+                    delayC2 = 1000;
+                    delayC3 = 1500;
+                    velocidadJuego = 11;
+                    break;
+            }
 
             // genero el coche 1
             setTimeout(() => {
                 coche = new Coche(yPosicion, "coche1");
                 arrayCoches.push(coche);
-            }, delayCoche1);
+            }, delayC1);
 
             // genero el coche 2
             setTimeout(() => {
                 coche = new Coche(yPosicion, "coche2");
                 arrayCoches.push(coche);
-            }, delayCoche2);
+            }, delayC2);
 
             // genero el coche 3
             setTimeout(() => {
                 coche = new Coche(yPosicion, "coche3");
                 arrayCoches.push(coche);
-            }, delayCoche3);
+            }, delayC3);
 
             contadorCoches++;
         }
 
-        if (contadorCoches === 3) {
+        if (contadorCoches === 4) {
             contadorCoches = 0;
         }
+
     }
 
     // -------------------------------------------------
     //  FUNCION PARA MOVER LOS OBJETOS DEL JUEGO
     // -------------------------------------------------
-
-    function muevoTortugas() {
-        for (let i = 0; i < arrayTortugas.length; i++) {
-            arrayTortugas[i].pintarTortuga(ctx);
-            arrayTortugas[i].moverTortuga();
-
-            if (arrayTortugas[i].desapareceDelMapa()) arrayTortugas[i].acabado = true;
-
-        }
-    }
-
-    function muevoTroncos() {
-        for (let i = 0; i < arrayTroncos.length; i++) {
-            arrayTroncos[i].pintarTronco(ctx);
-            arrayTroncos[i].moverTronco();
-
-            if (arrayTroncos[i].desapareceDelMapa()) arrayTroncos[i].acabado = true;
-        }
-    }
 
     function muevoCamiones() {
         for (let i = 0; i < arrayCamiones.length; i++) {
@@ -320,29 +267,56 @@ window.onload = function () {
     //  FUNCION QUE COMPRUEBA SI LA RANA GANA
     // -------------------------------------------------
 
-    function haGanado() {
-        if (rana.x === 0) {
+    function haGanado(rana) {
+        if (rana.y <= 0) {
             console.log("HAS GANADO");
             puntuacion = obtenerTiempo();
             guardarPartida(nombre, puntuacion);
             mostrarPartida();
             limpiarIntervalos();
 
+            botonReanudar.disabled = true;
+            botonNuevaPartida.disabled = false;
+            botonPausar.disabled = true;
+            botonReset.disabled = true;
+
             ctxInfo.fillStyle = "#33cc00";
             ctxInfo.font = "40px Tiny5";
             ctxInfo.fillText("YOU WIN!", 600 / 2 - 100, 100 / 2);
         }
     }
-    haGanado();
 
     function generaAnimacionRana() {
-        //pinto el mapa del juego
+        //pinto el mapa del juego y la rana
         pintarFondo(ctx);
-
-        //Muevo los objetos del juego (troncos, tortugas y coches)
         rana.pintar(ctx);
 
-        //manejarColisiones();
+        //compruebo si la rana ha ganado
+        haGanado(rana);
+
+        //compruebo si la rana ha colisionado con algún objeto
+        arrayCamiones.forEach((camion) => {
+
+            if (colision(rana, camion, 25)) {
+                perderVida();
+                // si la rana colisiona con algún objeto pierde una vida
+                // y se vuelve a poner en la posición inicial
+                rana.reset();
+                reproducirAudio(audioAtropello);
+            }
+        });
+
+        arrayCoches.forEach((coche) => {
+
+            if (colision(rana, coche, 20)) {
+                perderVida();
+                // si la rana colisiona con algún objeto pierde una vida
+                // y se vuelve a poner en la posición inicial
+                rana.reset();
+                reproducirAudio(audioAtropello);
+            }
+        });
+
     }
 
     // -------------------------------------------------
@@ -397,6 +371,7 @@ window.onload = function () {
         botonNuevaPartida.disabled = false;
         botonPausar.disabled = true;
         botonReanudar.disabled = false;
+        botonReset.disabled = false;
 
         ctxInfo.fillStyle = "#33cc00";
         ctxInfo.font = "40px Tiny5";
@@ -421,11 +396,6 @@ window.onload = function () {
         idRana = setInterval(animacionRana, 1000 / 20);
 
         //genero los elementos de la pantalla 
-        idGeneraTortugas = setInterval(generaTortugas, 3000);
-        idTortuga = setInterval(muevoTortugas, 1000 / 20);
-
-        idGeneraTroncos = setInterval(generaTroncos, 3000);
-        idTronco = setInterval(muevoTroncos, 1000 / 20);
 
         idGeneraCamiones = setInterval(generaCamiones, 7000);
         idCamion = setInterval(muevoCamiones, 1000 / 20);
@@ -462,7 +432,8 @@ window.onload = function () {
 
         ctx.clearRect(0, 0, 600, 400);
         ctxInfo.clearRect(0, 0, 600, 100);
-
+        
+        pintarVidas();
         // Para la gestion de la puntuación que será por tiempo
         tiempoInicio = Date.now();
 
@@ -470,25 +441,19 @@ window.onload = function () {
         idRana = setInterval(animacionRana, 1000 / 20);
 
         //genero los elementos de la pantalla 
-        idGeneraTortugas = setInterval(generaTortugas, 3000);
-        idTortuga = setInterval(muevoTortugas, 1000 / 20);
 
-        idGeneraTroncos = setInterval(generaTroncos, 3000);
-        idTronco = setInterval(muevoTroncos, 1000 / 20);
-
-        idGeneraCamiones = setInterval(generaCamiones, 3000);
+        idGeneraCamiones = setInterval(generaCamiones, 2000);
         idCamion = setInterval(muevoCamiones, 1000 / 20);
 
-        idGeneraCoches = setInterval(generaCoches, 3000);
+        idGeneraCoches = setInterval(generaCoches, 2000);
         idCoches = setInterval(muevoCoches, 1000 / 20);
 
-        manejarColisiones();            //para comprobar las colisiones del juego
-
-        pintarVidas();
         // Evento para saber cuando se presiona una tecla
         document.addEventListener("keydown", activaMovimiento, false);
         document.addEventListener("keyup", desactivaMovimiento, false);
     }
+
+    
 
     function textoGameOver() {
         ctxInfo.fillStyle = "#33cc00";
@@ -514,10 +479,6 @@ window.onload = function () {
     function limpiarIntervalos() {
         clearInterval(idRana);
         clearInterval(idAnimacion);
-        clearInterval(idGeneraTortugas);
-        clearInterval(idTortuga);
-        clearInterval(idGeneraTroncos);
-        clearInterval(idTronco);
         clearInterval(idGeneraCamiones);
         clearInterval(idCamion);
         clearInterval(idGeneraCoches);

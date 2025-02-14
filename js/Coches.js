@@ -11,10 +11,7 @@ function Coche(y_, tipo_){
         //              2ºcoche
     this.spriteCoche3 =[121, 1]; 
         //              3ºcoche 
-/*     this.posicion = 0;
-    this.inicio = 0; */
     this.tipoSwitch = tipo_;
-    //this.tipoCoche = Math.floor(Math.random() * 3);
 }
 
 const imgCoches = new Image();

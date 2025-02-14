@@ -9,13 +9,9 @@ let tiempoFinal, tiempoInicio, tiempoTotal;
 let xDerecha, xIzquierda, yArriba, yAbajo;      //variables de movimiento de la rana
 
 let rana;                                       // Objeto rana
-let tortuga;                                    // Objeto tortuga
-let tronco;                                     // Objeto tronco
 let coche;                                     // Objeto coche1
 let camion;                                     // Objeto camion
 
-let arrayTortugas = [];                         // Array de tortugas
-let arrayTroncos = [];                          // Array de troncos
 let arrayCoches = [];                           // Array de coches
 let arrayCamiones = [];                         // Array de camiones
 
@@ -30,19 +26,17 @@ let ctx, canvas;                                // contexto y canvas
 let canvasInfo, ctxInfo;                        // canvas y contexto del canvas secundario
 
 let Fondo = new Image ();
-Fondo.src = "./assets/img/mapa.png";            // mapa del juego
+Fondo.src = "./assets/img/mapa-1.png";          // mapa del juego
 
 const imgVidas = new Image();                   // imagen de las vidas
 imgVidas.src = "./assets/img/vida.png"; 
 
-let velocidadJuego = 1;                         // velocidad del juego
+let vidas = 3;                                  // vidas de la rana
 
-let imagenRana, imagenTortuga, imagenTronco;    // variables de las imagenes de los objetos
+let velocidadJuego = 1;                         // velocidad del juego
 
 let idAnimacion;                                // id de la animacion
 let idRana;                                     // id de la rana
-let idTortuga;                                  // id de la tortuga
-let idTronco;                                   // id del tronco
 let idCamion;                                   // id del camion
 let idCoches;                                   // id de los coches
 
@@ -69,10 +63,6 @@ const EstadosRana = {
 const audioSaltoRana = new Audio();
 audioSaltoRana.src = "./assets/sonido/sound-frogger-hop.wav";
 audioSaltoRana.volume = 0.2;
-
-const audioAgua = new Audio();
-audioAgua.src = "./assets/sonido/sound-frogger-squash.wav";
-audioAgua.volume = 0.2;
 
 const audioAtropello = new Audio();
 audioAtropello.src = "./assets/sonido/sound-frogger-plunk.wav";
